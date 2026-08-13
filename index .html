@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<script type="application/json" id="cowork-artifact-meta">
+{
+  "name": "V Fitter Ai Volkl",
+  "schemaVersion": 1,
+  "description": "V-Fitter AI: demo interactivo de fitting de raquetas Völkl Club. Selecciona un jugador y sesión para ver diagnóstico de nivel, orientación de juego, raqueta recomendada y configuración de encordado, basado en datos de Baseline Vision (DATOS S1 Y S2 V2.xlsx)."
+}
+</script>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>V-Fitter AI · Völkl Club</title>
+<style>
+  :root{ color-scheme: light; }
+  @import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;0,900;1,400&display=swap');
+
+  :root{
+    --black:#000000;
+    --gold:#fedd00;
+    --white:#ffffff;
+    --surf1:#111111;
+    --surf2:#1a1a1a;
+    --surf3:#252525;
+    --green:#4ade80;
+    --amber:#fbbf24;
+    --red:#f87171;
+    --border:rgba(255,255,255,.08);
+    --border-strong:rgba(255,255,255,.16);
+    --ease:.22s cubic-bezier(.4,0,.2,1);
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+
+  body{
+    background:var(--black);
+    color:var(--white);
+    font-family:'Source Sans 3', sans-serif;
+    font-weight:400;
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ---------- NAV ---------- */
+  nav{
+    position:sticky; top:0; z-index:50;
+    height:64px;
+    max-width:1440px; margin:0 auto;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0 24px;
+    background:rgba(0,0,0,.72);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--border);
+  }
+  .wordmark{font-weight:900; letter-spacing:.06em; font-size:16px; color:var(--white);}
+  .nav-tag{
+    font-weight:900; text-transform:uppercase; letter-spacing:.14em;
+    font-size:11px; color:var(--gold);
+    border:1px solid var(--gold); padding:6px 12px; border-radius:3px;
+  }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    max-width:1240px; margin:0 auto;
+    padding:56px 24px 32px;
+    border-left:3px solid var(--gold);
+    margin-top:32px;
+  }
+  .hero .eyebrow{
+    text-transform:uppercase; font-weight:900; letter-spacing:.18em;
+    font-size:12px; color:var(--gold); margin-bottom:12px;
+  }
+  .hero h1{
+    font-size:clamp(28px,4vw,44px);
+    font-weight:900; text-transform:uppercase; letter-spacing:.02em;
+    line-height:1.1;
+  }
+  .hero h1 span{color:var(--gold);}
+  .hero p{
+    margin-top:14px; max-width:640px;
+    color:rgba(255,255,255,.65); font-weight:300; font-size:15px; line-height:1.6;
+  }
+
+  /* ---------- LAYOUT ---------- */
+  .wrap{max-width:1240px; margin:0 auto; padding:24px;}
+  .grid{
+    display:grid; grid-template-columns: 1.1fr 1fr; gap:18px;
+  }
+  @media (max-width:960px){ .grid{grid-template-columns:1fr;} }
+
+  /* ---------- CARD ---------- */
+  .card{
+    background:var(--surf1);
+    border:1px solid var(--border);
+    border-radius:6px;
+    padding:28px;
+  }
+  .card.gold-edge{
+    border-top:4px solid var(--gold);
+  }
+  .card h2{
+    font-size:13px; font-weight:900; text-transform:uppercase; letter-spacing:.14em;
+    margin-bottom:20px; display:flex; align-items:center; gap:10px;
+  }
+  .card h2 .hex{color:var(--gold); font-size:16px;}
+
+  /* ---------- FORM ---------- */
+  .field{margin-bottom:18px;}
+  .field label{
+    display:block; font-size:11px; font-weight:700; text-transform:uppercase;
+    letter-spacing:.1em; color:rgba(255,255,255,.55); margin-bottom:8px;
+  }
+  .field .hint{
+    font-weight:300; text-transform:none; letter-spacing:0; color:rgba(255,255,255,.35);
+    font-size:11px; margin-top:6px;
+  }
+  input[type=number], input[type=text], input[type=email], input[type=tel], select{
+    width:100%;
+    background:var(--surf2);
+    border:1.5px solid var(--border-strong);
+    border-radius:4px;
+    color:var(--white);
+    font-family:inherit; font-size:14px; font-weight:400;
+    padding:12px 14px;
+    transition:border-color var(--ease), box-shadow var(--ease);
+  }
+  input[type=number]:focus, input[type=text]:focus, input[type=email]:focus, input[type=tel]:focus, select:focus{
+    outline:none; border-color:var(--white);
+    box-shadow:0 0 0 3px rgba(255,255,255,.08);
+  }
+  select{appearance:none; cursor:pointer;}
+
+  .row2{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+
+  .btn-primary{
+    width:100%;
+    background:var(--gold); color:var(--black);
+    border:none; border-radius:4px;
+    padding:16px;
+    font-weight:900; text-transform:uppercase; letter-spacing:.12em; font-size:13px;
+    cursor:pointer;
+    transition:transform var(--ease), box-shadow var(--ease);
+    margin-top:8px;
+  }
+  .btn-primary:hover{transform:translateY(-1px); box-shadow:0 8px 24px rgba(254,221,0,.18);}
+  .btn-primary:active{transform:translateY(0);}
+
+  .btn-secondary{
+    width:100%;
+    background:transparent; color:var(--white);
+    border:1.5px solid var(--border-strong); border-radius:4px;
+    padding:12px;
+    font-weight:700; text-transform:uppercase; letter-spacing:.1em; font-size:12px;
+    cursor:pointer; margin-top:10px;
+    transition:border-color var(--ease), color var(--ease);
+  }
+  .btn-secondary:hover{border-color:var(--gold); color:var(--gold);}
+
+  /* ---------- RESULT ---------- */
+  #resultPanel{display:none;}
+  #resultPanel.show{display:block; animation:fadeUp .3s var(--ease);}
+  @keyframes fadeUp{
+    from{opacity:0; transform:translateY(12px);}
+    to{opacity:1; transform:translateY(0);}
+  }
+
+  .kicker{
+    font-size:11px; font-weight:900; text-transform:uppercase; letter-spacing:.16em;
+    color:rgba(255,255,255,.45); margin-bottom:6px;
+  }
+  .profile-line{
+    font-size:15px; font-weight:300; color:rgba(255,255,255,.75); line-height:1.7; margin-bottom:22px;
+    padding-bottom:22px; border-bottom:1px solid var(--border);
+  }
+  .profile-line b{color:var(--gold); font-weight:700;}
+
+  .badge{
+    display:inline-flex; align-items:center; gap:6px;
+    font-size:10px; font-weight:900; text-transform:uppercase; letter-spacing:.08em;
+    padding:5px 10px; border-radius:3px; margin-right:6px; margin-bottom:6px;
+  }
+  .badge-nivel{background:rgba(254,221,0,.1); color:var(--gold); border:1px solid rgba(254,221,0,.4);}
+  .badge-orient{background:rgba(255,255,255,.08); color:var(--white); border:1px solid var(--border-strong);}
+
+  .racket-name{
+    font-size:26px; font-weight:900; text-transform:uppercase; letter-spacing:.02em;
+    color:var(--gold); margin:18px 0 4px;
+  }
+  .racket-spec{
+    display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px;
+  }
+  .spec-chip{
+    background:var(--surf2); border:1px solid var(--border);
+    padding:6px 10px; border-radius:3px; font-size:11px; font-weight:600;
+    color:rgba(255,255,255,.75);
+  }
+  .why{
+    font-size:14px; font-weight:300; line-height:1.7; color:rgba(255,255,255,.75);
+    margin-bottom:20px;
+  }
+
+  .config-box{
+    background:var(--surf2); border:1px solid var(--border); border-radius:4px;
+    padding:18px; margin-bottom:12px;
+  }
+  .config-box .label{
+    font-size:10px; font-weight:900; text-transform:uppercase; letter-spacing:.1em;
+    color:var(--gold); margin-bottom:6px;
+  }
+  .config-box .value{font-size:14px; font-weight:600;}
+  .config-box .sub{font-size:12px; font-weight:300; color:rgba(255,255,255,.5); margin-top:4px;}
+
+  .empty-state{
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    height:100%; min-height:340px; text-align:center; color:rgba(255,255,255,.35);
+  }
+  .empty-state .hex{font-size:44px; color:var(--gold); opacity:.5; margin-bottom:16px;}
+  .empty-state p{font-weight:300; font-size:13px; max-width:280px;}
+
+  .entregable-header{
+    background:var(--surf2);
+    border:1px solid var(--border-strong);
+    border-radius:4px;
+    padding:16px 18px;
+    font-weight:900; text-transform:uppercase; letter-spacing:.08em;
+    font-size:13px; text-align:center;
+    color:var(--gold);
+  }
+  .entregable-header .sub{
+    display:block; color:var(--white); font-size:11px; font-weight:700;
+    letter-spacing:.12em; margin-top:4px;
+  }
+
+  .datos-row{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:12px 0; border-bottom:1px solid var(--border);
+  }
+  .datos-row:last-child{border-bottom:none;}
+  .datos-row .k{
+    font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.06em;
+    color:rgba(255,255,255,.55);
+  }
+  .datos-row .v{font-size:14px; font-weight:600;}
+  .datos-row .v.avanzado{color:var(--green);}
+  .datos-row .v.intermedio{color:var(--amber);}
+  .datos-row .v.iniciador{color:var(--red);}
+
+  .fuente-tag{
+    margin-top:16px; padding-top:16px; border-top:1px solid var(--border);
+    font-size:11px; font-weight:300; color:rgba(255,255,255,.35);
+  }
+
+  .pasos-list{
+    list-style:none;
+    counter-reset:paso;
+    margin:0; padding:0;
+  }
+  .pasos-list li{
+    counter-increment:paso;
+    position:relative;
+    padding:10px 0 10px 34px;
+    border-bottom:1px solid var(--border);
+    font-size:13px; font-weight:300; line-height:1.6;
+    color:rgba(255,255,255,.75);
+  }
+  .pasos-list li:last-child{border-bottom:none; padding-bottom:0;}
+  .pasos-list li::before{
+    content:counter(paso);
+    position:absolute; left:0; top:9px;
+    width:22px; height:22px;
+    background:rgba(254,221,0,.1);
+    border:1px solid rgba(254,221,0,.4);
+    color:var(--gold);
+    border-radius:3px;
+    font-size:11px; font-weight:900;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .pasos-list li b{color:var(--white); font-weight:700;}
+
+  footer{
+    max-width:1240px; margin:40px auto 0; padding:24px;
+    border-top:1px solid var(--border);
+    display:flex; align-items:center; justify-content:space-between;
+    color:rgba(255,255,255,.3); font-size:11px; font-weight:300;
+  }
+  footer .wordmark{font-size:12px; opacity:.6;}
+
+  ::placeholder{color:rgba(255,255,255,.25);}
+
+  /* ---------- BOTÓN VER MÉTRICAS ---------- */
+  .kicker-row{
+    display:flex; align-items:center; justify-content:space-between;
+    flex-wrap:wrap; gap:10px; margin-bottom:6px;
+  }
+  .btn-metricas{
+    display:inline-flex; align-items:center; gap:6px;
+    background:transparent; color:var(--gold);
+    border:1px solid rgba(254,221,0,.4); border-radius:3px;
+    padding:7px 12px;
+    font-family:inherit; font-weight:900; text-transform:uppercase; letter-spacing:.08em; font-size:10px;
+    cursor:pointer;
+    transition:background var(--ease), border-color var(--ease);
+  }
+  .btn-metricas:hover{background:rgba(254,221,0,.1); border-color:var(--gold);}
+  .btn-metricas .hex{font-size:11px;}
+
+  /* ---------- MODAL ---------- */
+  .modal-overlay{
+    display:none;
+    position:fixed; inset:0; z-index:100;
+    background:rgba(0,0,0,.75);
+    backdrop-filter:blur(4px);
+    align-items:center; justify-content:center;
+    padding:24px;
+  }
+  .modal-overlay.show{display:flex; animation:fadeUp .22s var(--ease);}
+
+  .modal-box{
+    width:100%; max-width:800px; max-height:88vh;
+    overflow-y:auto;
+    background:var(--surf1);
+    border:1px solid var(--border-strong);
+    border-top:4px solid var(--gold);
+    border-radius:6px;
+    padding:28px;
+  }
+
+  .modal-header{
+    display:flex; align-items:flex-start; justify-content:space-between;
+    margin-bottom:20px;
+  }
+  .modal-title{
+    font-size:20px; font-weight:900; text-transform:uppercase; letter-spacing:.02em;
+    color:var(--white);
+  }
+  .modal-close{
+    background:var(--surf2); border:1px solid var(--border-strong); border-radius:3px;
+    color:var(--white); width:32px; height:32px;
+    font-size:14px; cursor:pointer;
+    transition:border-color var(--ease), color var(--ease);
+  }
+  .modal-close:hover{border-color:var(--gold); color:var(--gold);}
+
+  .modal-tabs{
+    display:flex; gap:0;
+    border:1px solid var(--border-strong); border-radius:4px;
+    overflow:hidden; margin-bottom:22px;
+    width:fit-content;
+  }
+  .modal-tab{
+    background:transparent; color:rgba(255,255,255,.55);
+    border:none; padding:10px 18px;
+    font-family:inherit; font-weight:900; text-transform:uppercase; letter-spacing:.08em; font-size:11px;
+    cursor:pointer;
+    transition:background var(--ease), color var(--ease);
+  }
+  .modal-tab + .modal-tab{border-left:1px solid var(--border-strong);}
+  .modal-tab.active{background:var(--gold); color:var(--black);}
+
+  .modal-body .field{margin-bottom:18px;}
+
+  .chart-wrap{
+    background:var(--surf2); border:1px solid var(--border); border-radius:4px;
+    padding:18px; height:320px; position:relative;
+  }
+  .chart-wrap-tall{height:420px;}
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="wordmark">VÖLKL</span>
+  <span class="nav-tag">V-Fitter AI</span>
+</nav>
+
+<div class="hero">
+  <div class="eyebrow">Völkl Club · Digital Fitting Inteligente</div>
+  <h1>Tu <span>raqueta ideal</span>, calculada por Baseline Vision</h1>
+  <p>El agente lee automáticamente las métricas capturadas por Baseline Vision durante tu sesión de prueba (con tu raqueta personal) y las cruza contra los frameworks de rendimiento y la ficha técnica del catálogo Völkl. Selecciona el jugador para ver su diagnóstico.</p>
+</div>
+
+<div class="wrap">
+
+  <div id="postLeadSection">
+
+  <div class="card gold-edge" style="margin-bottom:18px;">
+    <h2><span class="hex">⬡</span> Selecciona el perfil</h2>
+    <div class="row2" style="align-items:end;" id="selectorRow">
+      <div class="field" style="margin-bottom:0;">
+        <label>Jugador (dato capturado por Baseline Vision)</label>
+        <select id="jugadorSelect" onchange="mostrarDiagnostico()">
+          <option value="">— Selecciona un número de jugador —</option>
+        </select>
+      </div>
+      <div class="field" style="margin-bottom:0;">
+        <label>Sesión evaluada</label>
+        <select id="sesionSelect" onchange="mostrarDiagnostico()">
+          <option value="Sesión 1">Sesión 1 — Raqueta personal (baseline)</option>
+          <option value="Sesión 2">Sesión 2 — Con raqueta Völkl</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid">
+
+    <!-- PERFIL / DATOS CRUDOS -->
+    <div class="card">
+      <h2><span class="hex">⬡</span> Datos crudos de la prueba</h2>
+      <div class="empty-state" id="emptyStateLeft">
+        <div class="hex">⬡</div>
+        <p>Selecciona un jugador arriba para ver sus métricas capturadas por Baseline Vision.</p>
+      </div>
+      <div id="datosPanel" style="display:none;"></div>
+    </div>
+
+    <!-- RESULT: ENTREGABLE -->
+    <div class="card" id="resultCard">
+      <h2><span class="hex">⬡</span> Diagnóstico V-Fitter</h2>
+
+      <div class="empty-state" id="emptyState">
+        <div class="hex">⬡</div>
+        <p>El diagnóstico personalizado aparecerá aquí en cuanto selecciones un número de jugador.</p>
+      </div>
+
+      <div id="resultPanel">
+        <div class="entregable-header" id="entregableHeader"></div>
+
+        <div class="kicker-row" style="margin-top:18px;">
+          <div class="kicker" style="margin-bottom:0;">Perfil en cancha</div>
+          <button class="btn-metricas" onclick="abrirMetricas()">
+            <span class="hex">⬡</span> Ver todas las métricas
+          </button>
+        </div>
+        <div class="profile-line" id="perfilTexto"></div>
+
+        <div id="badges"></div>
+
+        <div class="kicker" style="margin-top:20px;">Nivel de juego</div>
+        <div id="nivelGrande" style="font-size:22px; font-weight:900; text-transform:uppercase; letter-spacing:.02em; color:var(--gold);"></div>
+
+        <div class="kicker" style="margin-top:20px;">Raqueta ideal</div>
+        <div class="racket-name" id="racketName"></div>
+        <div class="racket-spec" id="racketSpec"></div>
+
+        <div class="kicker" style="margin-top:16px;">Por qué se recomienda</div>
+        <div class="why" id="racketWhy"></div>
+
+        <div class="config-box">
+          <div class="label">Cuerda recomendada</div>
+          <div class="value" id="cuerdaValue"></div>
+          <div class="sub" id="cuerdaSub"></div>
+        </div>
+
+        <div class="config-box">
+          <div class="label">Tensión sugerida</div>
+          <div class="value" id="tensionValue"></div>
+          <div class="sub" id="tensionSub"></div>
+        </div>
+
+        <div class="kicker" style="margin-top:20px;">Próximos pasos</div>
+        <ol class="pasos-list" id="proximosPasos"></ol>
+      </div>
+    </div>
+
+  </div>
+
+  </div><!-- /postLeadSection -->
+</div>
+
+<footer>
+  <span>V-Fitter AI · Völkl Club — recomendación basada en datos, no en comisión.</span>
+  <span class="wordmark">VÖLKL</span>
+</footer>
+
+<!-- MODAL: TODAS LAS MÉTRICAS -->
+<div class="modal-overlay" id="modalOverlay" onclick="cerrarMetricasClick(event)">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div>
+        <div class="kicker" style="margin-bottom:4px;">Todas las métricas</div>
+        <div class="modal-title" id="modalPlayerName">—</div>
+      </div>
+      <button class="modal-close" onclick="cerrarMetricas()">✕</button>
+    </div>
+
+    <div class="modal-tabs">
+      <button class="modal-tab active" id="tabHistorial" onclick="cambiarTab('historial')">Historial</button>
+      <button class="modal-tab" id="tabComparativa" onclick="cambiarTab('comparativa')">Raqueta vs Raqueta</button>
+      <button class="modal-tab" id="tabHeatmap" onclick="cambiarTab('heatmap')">Heat Map</button>
+    </div>
+
+    <div class="modal-body" id="tabPanelHistorial">
+      <div class="field" style="max-width:320px;">
+        <label>Métrica a visualizar</label>
+        <select id="metricaHistorialSelect" onchange="renderHistorial()">
+          <option value="velocidad">Velocidad máxima de golpe (km/h)</option>
+          <option value="velocidad_prom">Velocidad promedio de golpe (km/h)</option>
+          <option value="altura">Margen sobre la red (m)</option>
+          <option value="servicio">Consistencia — golpes dentro (%)</option>
+          <option value="erroresPct">Errores — fuera + red (%)</option>
+          <option value="rallyLargoPct">Peloteos largos ganados (%)</option>
+        </select>
+      </div>
+      <div class="chart-wrap"><canvas id="chartHistorial"></canvas></div>
+      <div class="fuente-tag">Eje X: sesión de prueba (fecha). Eje Y: resultado promedio de la métrica seleccionada.</div>
+    </div>
+
+    <div class="modal-body" id="tabPanelComparativa" style="display:none;">
+      <div class="chart-wrap chart-wrap-tall"><canvas id="chartComparativa"></canvas></div>
+      <div class="fuente-tag">
+        <span style="color:rgba(255,255,255,.6);">●</span> Raqueta personal (Sesión 1) &nbsp;&nbsp;
+        <span style="color:var(--gold);">●</span> Raqueta Völkl (Sesión 2)
+      </div>
+    </div>
+
+    <div class="modal-body" id="tabPanelHeatmap" style="display:none;">
+      <div class="chart-wrap chart-wrap-tall" style="display:flex; align-items:center; justify-content:center; padding:14px;">
+        <svg id="heatmapSvg" viewBox="0 0 460 500" style="width:100%; max-width:340px; height:auto; display:block;">
+          <defs>
+            <radialGradient id="heatDot" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#fedd00" stop-opacity="0.35"/>
+              <stop offset="100%" stop-color="#fedd00" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <rect x="30" y="30" width="395" height="428" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="2"/>
+          <line x1="79.5" y1="30" x2="79.5" y2="458" stroke="rgba(255,255,255,.5)" stroke-width="2"/>
+          <line x1="375.5" y1="30" x2="375.5" y2="458" stroke="rgba(255,255,255,.5)" stroke-width="2"/>
+          <line x1="30" y1="30" x2="425" y2="30" stroke="#fedd00" stroke-width="3"/>
+          <line x1="79.5" y1="260" x2="375.5" y2="260" stroke="rgba(255,255,255,.5)" stroke-width="2"/>
+          <line x1="227.5" y1="30" x2="227.5" y2="260" stroke="rgba(255,255,255,.35)" stroke-width="1.5"/>
+          <line x1="227.5" y1="452" x2="227.5" y2="458" stroke="rgba(255,255,255,.5)" stroke-width="2"/>
+          <g id="heatPoints"></g>
+        </svg>
+      </div>
+      <div class="fuente-tag">Puntos simulados a partir de la distribución real de golpes del jugador (zona de profundidad y lateral registrada por Baseline Vision). No son golpes individuales medidos uno a uno.</div>
+
+      <div class="kicker" style="margin-top:22px;">Calzado Joma recomendado para el nivel</div>
+      <div id="jomaReco"></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
+<script>
+// =========================================================
+// V-FITTER AI — Lógica de decisión
+// Fuente: "Definir" (frameworks) + "Logica de decisión" +
+// Catálogo Völkl (18 raquetas)
+// =========================================================
+
+// pesoMin/pesoMax: gramos (para reglas de peso). patronSegundo: segundo número del patrón
+// de encordado (18 en "16x18", 20 en "18x20"...) usado para desempatar por spin/control.
+// denso: true solo para el único patrón 18x20 del catálogo. headHeavy: true solo V1 Power Arm.
+const CATALOGO = {
+  // INICIADORES — POTENCIA
+  v1powerarm: {nombre:"VÖSTRA 1 Power Arm", nivel:"INICIADOR", orientacion:"Potencia",
+    specs:["255 g","115 in²","16x17 muy abierto","HH"], pesoMin:255, pesoMax:255, patronSegundo:17, denso:false, headHeavy:true,
+    why:"Único frame head-heavy del catálogo: suma masa extra al golpe sin esfuerzo de swing. Máxima comodidad, potencia fácil y mínimo impacto en brazo/hombro."},
+  v2: {nombre:"VÖSTRA V2", nivel:"INICIADOR", orientacion:"Potencia",
+    specs:["265 g","115 in²","16x19 abierto","HL"], pesoMin:265, pesoMax:265, patronSegundo:19, denso:false, headHeavy:false,
+    why:"Oversize arm-friendly. Genera potencia y spin con muy poco esfuerzo de swing — ideal para construir consistencia."},
+  v3: {nombre:"VÖSTRA V3", nivel:"INICIADOR", orientacion:"Potencia",
+    specs:["270 g","110 in²","16x19 abierto","HL"], pesoMin:270, pesoMax:270, patronSegundo:19, denso:false, headHeavy:false,
+    why:"Tecnología Catapult (resortes 3 y 9): potencia fácil, gran tolerancia a golpes descentrados y máxima maniobrabilidad."},
+  v4: {nombre:"VÖSTRA V4", nivel:"INICIADOR", orientacion:"Potencia",
+    specs:["275 g","105 in²","16x19 abierto","HL"], pesoMin:275, pesoMax:275, patronSegundo:19, denso:false, headHeavy:false,
+    why:"Cabeza amplia de 105 in² con tecnología Catapult: equilibrio entre potencia, control y comodidad en un marco versátil, ideal para jugadores en desarrollo."},
+  v5: {nombre:"VÖSTRA V5", nivel:"INICIADOR", orientacion:"Potencia",
+    specs:["260 g","100 in²","16x18 abierto","HL"], pesoMin:260, pesoMax:260, patronSegundo:18, denso:false, headHeavy:false,
+    why:"La más ligera de la gama. Patrón abierto 16x18 facilita generar spin y velocidad de swing con poco esfuerzo — excelente raqueta de transición."},
+  xplosive: {nombre:"XPLOSIVE", nivel:"INICIADOR", orientacion:"Potencia",
+    specs:["265 g","102 in²","16x19 abierto","HL"], pesoMin:265, pesoMax:265, patronSegundo:19, denso:false, headHeavy:false,
+    why:"Grafito de alta densidad y el precio de entrada más bajo del catálogo. Potencia viva y efectos constantes como primera raqueta de rendimiento."},
+
+  // INTERMEDIOS
+  v1os: {nombre:"VÖSTRA V1 OS", nivel:"INTERMEDIO", orientacion:"Potencia",
+    specs:["285 g","110 in²","16x19 abierto","HL"], pesoMin:285, pesoMax:285, patronSegundo:19, denso:false, headHeavy:false,
+    why:"Sweet spot masivo. Comodidad absoluta y potencia controlada con gran tolerancia — el puente natural hacia niveles más altos."},
+  v8_285: {nombre:"VÖSTRA V8 (285g)", nivel:"INTERMEDIO", orientacion:"Sensación / Potencia",
+    specs:["285 g","100 in²","16x18 abierto","HL"], pesoMin:285, pesoMax:285, patronSegundo:18, denso:false, headHeavy:false,
+    why:"Patrón abierto 16x18: mucha mordida y facilidad de spin, buena sensación de tacto y potencia con poco esfuerzo. Ágil y fácil de acelerar."},
+
+  // INTERMEDIOS ALTOS
+  v7: {nombre:"VÖSTRA V7", nivel:"INTERMEDIO ALTO", orientacion:"Potencia / Efecto",
+    specs:["300 g","100 in²","16x19 abierto","HL"], pesoMin:300, pesoMax:300, patronSegundo:19, denso:false, headHeavy:false,
+    why:"Construcción arm-friendly con patrón abierto: genera profundidad y spin con facilidad. Pensada para juego agresivo de fondo de pista."},
+  v8_300: {nombre:"VÖSTRA V8 (300-315g)", nivel:"INTERMEDIO ALTO", orientacion:"Sensación / Efecto",
+    specs:["300-315 g","100 in²","16x18 abierto","HL"], pesoMin:300, pesoMax:315, patronSegundo:18, denso:false, headHeavy:false,
+    why:"Misma mordida y facilidad de spin que la V8 de 285g, con más masa para estabilidad ante golpes potentes."},
+  v1classic: {nombre:"V1 Classic Version 12", nivel:"INTERMEDIO ALTO", orientacion:"Sensación",
+    specs:["285 g","102 in²","16x19 abierto","HL"], pesoMin:285, pesoMax:285, patronSegundo:19, denso:false, headHeavy:false,
+    why:"Icónica desde hace 25 años. Perfil Vario Beam con protección máxima de brazo; sensación suave pero firme y nítida."},
+  v1evo: {nombre:"V1 EVO", nivel:"INTERMEDIO ALTO", orientacion:"Sensación",
+    specs:["305 g","102 in²","16x19 abierto","HL"], pesoMin:305, pesoMax:305, patronSegundo:19, denso:false, headHeavy:false,
+    why:"Perfil Vario Beam que optimiza estabilidad torsional: buen control, potencial de spin y potencia con menor fatiga."},
+  v1mp: {nombre:"VÖSTRA V1 MP", nivel:"INTERMEDIO ALTO", orientacion:"Sensación",
+    specs:["285 g","102 in²","16x19 abierto","HL"], pesoMin:285, pesoMax:285, patronSegundo:19, denso:false, headHeavy:false,
+    why:"Hereda la protección de brazo de la familia V1 con jugabilidad de alto nivel — comodidad sin sacrificar rendimiento."},
+  v10: {nombre:"VÖSTRA V10", nivel:"INTERMEDIO ALTO", orientacion:"Equilibrada (Control/Potencia)",
+    specs:["300-320 g","98 in²","16x19 beam delgado","HL"], pesoMin:300, pesoMax:320, patronSegundo:19, denso:false, headHeavy:false,
+    why:"Beam delgado dentro de un patrón abierto: combina control, potencia y sensación precisa. Sweet spot ampliado (V-Engine)."},
+
+  // AVANZADOS
+  c10evo: {nombre:"C10 EVO", nivel:"AVANZADO", orientacion:"Control",
+    specs:["310 g","98 in²","16x19","HL"], pesoMin:310, pesoMax:310, patronSegundo:19, denso:false, headHeavy:false,
+    why:"Perfil delgado de 19mm y gran estabilidad. Maniobrabilidad de marco rápido con el control legendario de la línea C10."},
+  c10pro: {nombre:"C10 PRO", nivel:"AVANZADO", orientacion:"Control",
+    specs:["330 g","98 in²","16x19","HL"], pesoMin:330, pesoMax:330, patronSegundo:19, denso:false, headHeavy:false,
+    why:"Player's frame 'pro stock'. Máxima estabilidad para contrarrestar potencia rival y transformar defensa en ataque."},
+  v8pro: {nombre:"V8 Pro", nivel:"AVANZADO", orientacion:"Control",
+    specs:["305 g","100 in²","18x20 denso","HL"], pesoMin:305, pesoMax:305, patronSegundo:20, denso:true, headHeavy:false,
+    why:"Único patrón denso 18x20 del catálogo: tacto y control quirúrgico con la durabilidad y consistencia de un marco denso."},
+  v1pro: {nombre:"VÖSTRA V1 PRO", nivel:"AVANZADO", orientacion:"Control",
+    specs:["305 g","99.5 in²","16x19 Vario Beam","HL"], pesoMin:305, pesoMax:305, patronSegundo:19, denso:false, headHeavy:false,
+    why:"Única raqueta de competición con perfil Vario Beam (23-20-23mm): control preciso normalmente asociado a perfiles delgados tradicionales."},
+  v9: {nombre:"VÖSTRA V9", nivel:"AVANZADO", orientacion:"Control",
+    specs:["290-305 g","100 in²","16x19 beam 21mm"," HL"], pesoMin:290, pesoMax:305, patronSegundo:19, denso:false, headHeavy:false,
+    why:"Beam delgado de 21mm dentro de patrón abierto: control alto para un frame abierto, con juego agresivo y sensación firme y confortable."}
+};
+
+const NOMBRE_REAL_JUGADOR = {
+  "Jugador 01": "Carlos Medina",
+  "Jugador 02": "Ana Torres",
+  "Jugador 03": "Luis Herrera",
+  "Jugador 04": "María Fernández",
+  "Jugador 05": "Jorge Salinas",
+  "Jugador 06": "Paola Ramírez",
+  "Jugador 07": "Diego Castillo",
+  "Jugador 08": "Fernanda Ruiz",
+  "Jugador 09": "Ricardo Ortega",
+  "Jugador 10": "Valeria Núñez",
+  "Jugador 11": "Sergio Vargas",
+  "Jugador 12": "Camila Rojas",
+  "Jugador 13": "Andrés Paredes",
+  "Jugador 14": "Daniela Cortés",
+  "Jugador 15": "Iván Guzmán",
+  "Jugador 16": "Regina Solís",
+  "Jugador 17": "Emilio Aguilar",
+  "Jugador 18": "Ximena Beltrán"
+};
+
+const NIVEL_JUGADOR_V2 = {
+  "Jugador 01": "INICIADOR", "Jugador 02": "INICIADOR", "Jugador 03": "INICIADOR",
+  "Jugador 04": "INICIADOR", "Jugador 05": "INICIADOR", "Jugador 06": "INICIADOR",
+  "Jugador 07": "INTERMEDIO", "Jugador 08": "INTERMEDIO",
+  "Jugador 09": "INTERMEDIO ALTO", "Jugador 10": "INTERMEDIO ALTO",
+  "Jugador 11": "INTERMEDIO ALTO", "Jugador 12": "INTERMEDIO ALTO", "Jugador 13": "INTERMEDIO ALTO",
+  "Jugador 14": "AVANZADO", "Jugador 15": "AVANZADO", "Jugador 16": "AVANZADO",
+  "Jugador 17": "AVANZADO", "Jugador 18": "AVANZADO"
+};
+
+const DATOS_JUGADORES = {
+  "Jugador 01": {
+    "Sesión 1": {raqueta_usada:"Wilson Pro Staff 97", velocidad:79.4, velocidad_prom:36.9, altura:1.16, servicio:61.4, erroresPct:38.6, errors:28, winners:8, rallyLargoPct:14.2, pct_profundos:88.3, depth_fondo_pct:63.5, depth_media_pct:24.8, depth_red_pct:11.7, lat_izq_pct:34.0, lat_centro_pct:34.2, lat_der_pct:31.8},
+    "Sesión 2": {raqueta_usada:"VÖSTRA 1 Power Arm", velocidad:81.3, velocidad_prom:37.7, altura:1.21, servicio:65.5, erroresPct:34.5, errors:25, winners:9, rallyLargoPct:14.6, pct_profundos:88.4, depth_fondo_pct:64.2, depth_media_pct:24.2, depth_red_pct:11.6, lat_izq_pct:32.9, lat_centro_pct:34.5, lat_der_pct:32.6}
+  },
+  "Jugador 02": {
+    "Sesión 1": {raqueta_usada:"Babolat Pure Aero", velocidad:58.9, velocidad_prom:37.8, altura:1.31, servicio:57.0, erroresPct:43.0, errors:28, winners:6, rallyLargoPct:10.1, pct_profundos:87.1, depth_fondo_pct:66.5, depth_media_pct:20.6, depth_red_pct:12.9, lat_izq_pct:29.2, lat_centro_pct:36.7, lat_der_pct:34.1},
+    "Sesión 2": {raqueta_usada:"VÖSTRA V2", velocidad:63.0, velocidad_prom:38.5, altura:1.3, servicio:60.2, erroresPct:39.8, errors:26, winners:6, rallyLargoPct:10.4, pct_profundos:87.0, depth_fondo_pct:65.5, depth_media_pct:21.5, depth_red_pct:13.0, lat_izq_pct:30.8, lat_centro_pct:35.7, lat_der_pct:33.5}
+  },
+  "Jugador 03": {
+    "Sesión 1": {raqueta_usada:"HEAD Speed MP", velocidad:69.5, velocidad_prom:41.1, altura:1.29, servicio:57.0, erroresPct:43.0, errors:28, winners:7, rallyLargoPct:11.1, pct_profundos:83.6, depth_fondo_pct:62.4, depth_media_pct:21.2, depth_red_pct:16.4, lat_izq_pct:27.9, lat_centro_pct:38.5, lat_der_pct:33.6},
+    "Sesión 2": {raqueta_usada:"VÖSTRA V3", velocidad:71.3, velocidad_prom:42.1, altura:1.3, servicio:60.6, erroresPct:39.4, errors:26, winners:8, rallyLargoPct:11.8, pct_profundos:83.3, depth_fondo_pct:62.2, depth_media_pct:21.1, depth_red_pct:16.7, lat_izq_pct:28.1, lat_centro_pct:37.1, lat_der_pct:34.9}
+  },
+  "Jugador 04": {
+    "Sesión 1": {raqueta_usada:"Yonex Ezone 100", velocidad:75.2, velocidad_prom:51.6, altura:1.69, servicio:58.1, erroresPct:41.9, errors:24, winners:4, rallyLargoPct:14.3, pct_profundos:88.4, depth_fondo_pct:66.0, depth_media_pct:22.4, depth_red_pct:11.6, lat_izq_pct:35.1, lat_centro_pct:33.9, lat_der_pct:31.1},
+    "Sesión 2": {raqueta_usada:"VÖSTRA V4", velocidad:76.0, velocidad_prom:52.9, altura:1.52, servicio:63.0, erroresPct:37.0, errors:22, winners:5, rallyLargoPct:14.7, pct_profundos:89.1, depth_fondo_pct:67.1, depth_media_pct:22.0, depth_red_pct:10.9, lat_izq_pct:36.0, lat_centro_pct:34.1, lat_der_pct:29.9}
+  },
+  "Jugador 05": {
+    "Sesión 1": {raqueta_usada:"Prince Textreme Tour 100", velocidad:67.2, velocidad_prom:41.0, altura:1.29, servicio:62.2, erroresPct:37.8, errors:28, winners:5, rallyLargoPct:10.6, pct_profundos:65.7, depth_fondo_pct:38.3, depth_media_pct:27.4, depth_red_pct:34.4, lat_izq_pct:28.7, lat_centro_pct:29.7, lat_der_pct:41.6},
+    "Sesión 2": {raqueta_usada:"VÖSTRA V5", velocidad:68.0, velocidad_prom:42.4, altura:1.3, servicio:66.4, erroresPct:33.6, errors:26, winners:5, rallyLargoPct:11.1, pct_profundos:66.5, depth_fondo_pct:39.7, depth_media_pct:26.8, depth_red_pct:33.5, lat_izq_pct:28.5, lat_centro_pct:29.9, lat_der_pct:41.6}
+  },
+  "Jugador 06": {
+    "Sesión 1": {raqueta_usada:"Dunlop CX 200", velocidad:75.6, velocidad_prom:48.6, altura:1.29, servicio:52.6, erroresPct:47.4, errors:24, winners:5, rallyLargoPct:7.2, pct_profundos:90.6, depth_fondo_pct:61.5, depth_media_pct:29.1, depth_red_pct:9.3, lat_izq_pct:37.7, lat_centro_pct:26.3, lat_der_pct:36.0},
+    "Sesión 2": {raqueta_usada:"XPLOSIVE", velocidad:71.1, velocidad_prom:49.8, altura:1.3, servicio:55.0, erroresPct:45.0, errors:22, winners:6, rallyLargoPct:7.4, pct_profundos:90.4, depth_fondo_pct:61.0, depth_media_pct:29.4, depth_red_pct:9.6, lat_izq_pct:37.8, lat_centro_pct:25.4, lat_der_pct:36.8}
+  },
+  "Jugador 07": {
+    "Sesión 1": {raqueta_usada:"Tecnifibre T-Fight 300", velocidad:80.8, velocidad_prom:61.4, altura:1.66, servicio:71.0, erroresPct:29.0, errors:17, winners:12, rallyLargoPct:20.6, pct_profundos:83.9, depth_fondo_pct:60.4, depth_media_pct:23.5, depth_red_pct:16.1, lat_izq_pct:40.4, lat_centro_pct:27.4, lat_der_pct:32.2},
+    "Sesión 2": {raqueta_usada:"VÖSTRA V1 OS", velocidad:84.5, velocidad_prom:63.2, altura:1.52, servicio:73.3, erroresPct:26.7, errors:15, winners:14, rallyLargoPct:21.5, pct_profundos:84.0, depth_fondo_pct:60.2, depth_media_pct:23.8, depth_red_pct:16.0, lat_izq_pct:37.2, lat_centro_pct:29.6, lat_der_pct:33.1}
+  },
+  "Jugador 08": {
+    "Sesión 1": {raqueta_usada:"Wilson Clash 100", velocidad:92.2, velocidad_prom:64.0, altura:1.48, servicio:68.5, erroresPct:31.5, errors:21, winners:9, rallyLargoPct:22.2, pct_profundos:66.3, depth_fondo_pct:36.2, depth_media_pct:30.1, depth_red_pct:33.7, lat_izq_pct:27.8, lat_centro_pct:37.3, lat_der_pct:34.9},
+    "Sesión 2": {raqueta_usada:"VÖSTRA V8 285g", velocidad:93.7, velocidad_prom:65.1, altura:1.38, servicio:72.9, erroresPct:27.1, errors:20, winners:9, rallyLargoPct:22.6, pct_profundos:67.5, depth_fondo_pct:35.7, depth_media_pct:31.8, depth_red_pct:32.5, lat_izq_pct:28.0, lat_centro_pct:37.2, lat_der_pct:34.7}
+  },
+  "Jugador 09": {
+    "Sesión 1": {raqueta_usada:"Babolat Pure Drive", velocidad:100.1, velocidad_prom:65.4, altura:1.43, servicio:73.4, erroresPct:26.6, errors:13, winners:18, rallyLargoPct:30.7, pct_profundos:90.3, depth_fondo_pct:66.5, depth_media_pct:23.8, depth_red_pct:9.7, lat_izq_pct:27.5, lat_centro_pct:30.0, lat_der_pct:42.5},
+    "Sesión 2": {raqueta_usada:"V1 Classic Ver.12", velocidad:101.6, velocidad_prom:66.3, altura:1.37, servicio:76.8, erroresPct:23.2, errors:12, winners:21, rallyLargoPct:31.5, pct_profundos:90.3, depth_fondo_pct:66.7, depth_media_pct:23.6, depth_red_pct:9.7, lat_izq_pct:28.2, lat_centro_pct:28.8, lat_der_pct:42.9}
+  },
+  "Jugador 10": {
+    "Sesión 1": {raqueta_usada:"HEAD Extreme MP", velocidad:103.0, velocidad_prom:76.3, altura:1.62, servicio:78.7, erroresPct:21.3, errors:14, winners:17, rallyLargoPct:33.2, pct_profundos:83.6, depth_fondo_pct:63.9, depth_media_pct:19.7, depth_red_pct:16.4, lat_izq_pct:37.5, lat_centro_pct:32.4, lat_der_pct:30.1},
+    "Sesión 2": {raqueta_usada:"V1 EVO", velocidad:109.2, velocidad_prom:79.3, altura:1.46, servicio:81.8, erroresPct:18.2, errors:12, winners:19, rallyLargoPct:34.0, pct_profundos:82.9, depth_fondo_pct:63.2, depth_media_pct:19.7, depth_red_pct:17.1, lat_izq_pct:37.2, lat_centro_pct:30.7, lat_der_pct:32.0}
+  },
+  "Jugador 11": {
+    "Sesión 1": {raqueta_usada:"Yonex Vcore 98", velocidad:99.0, velocidad_prom:65.7, altura:1.16, servicio:81.4, erroresPct:18.6, errors:12, winners:19, rallyLargoPct:30.2, pct_profundos:88.4, depth_fondo_pct:68.1, depth_media_pct:20.3, depth_red_pct:11.6, lat_izq_pct:35.6, lat_centro_pct:31.7, lat_der_pct:32.7},
+    "Sesión 2": {raqueta_usada:"VÖSTRA V1 MP", velocidad:100.2, velocidad_prom:67.3, altura:1.22, servicio:84.4, erroresPct:15.6, errors:11, winners:22, rallyLargoPct:31.1, pct_profundos:87.8, depth_fondo_pct:67.8, depth_media_pct:20.0, depth_red_pct:12.2, lat_izq_pct:35.2, lat_centro_pct:31.8, lat_der_pct:33.0}
+  },
+  "Jugador 12": {
+    "Sesión 1": {raqueta_usada:"Wilson Blade 98", velocidad:104.0, velocidad_prom:81.7, altura:1.31, servicio:80.0, erroresPct:20.0, errors:17, winners:14, rallyLargoPct:32.3, pct_profundos:84.2, depth_fondo_pct:64.8, depth_media_pct:19.4, depth_red_pct:15.8, lat_izq_pct:40.0, lat_centro_pct:33.0, lat_der_pct:27.1},
+    "Sesión 2": {raqueta_usada:"VÖSTRA V10", velocidad:104.8, velocidad_prom:82.6, altura:1.3, servicio:83.1, erroresPct:16.9, errors:15, winners:16, rallyLargoPct:33.7, pct_profundos:84.3, depth_fondo_pct:65.1, depth_media_pct:19.2, depth_red_pct:15.8, lat_izq_pct:40.3, lat_centro_pct:30.8, lat_der_pct:28.9}
+  },
+  "Jugador 13": {
+    "Sesión 1": {raqueta_usada:"Prince Phantom 100", velocidad:96.6, velocidad_prom:75.8, altura:1.06, servicio:77.0, erroresPct:23.0, errors:13, winners:19, rallyLargoPct:32.1, pct_profundos:87.6, depth_fondo_pct:68.0, depth_media_pct:19.6, depth_red_pct:12.4, lat_izq_pct:27.4, lat_centro_pct:33.0, lat_der_pct:39.6},
+    "Sesión 2": {raqueta_usada:"VÖSTRA V7", velocidad:101.3, velocidad_prom:78.2, altura:1.17, servicio:81.9, erroresPct:18.1, errors:12, winners:21, rallyLargoPct:33.6, pct_profundos:87.9, depth_fondo_pct:68.2, depth_media_pct:19.7, depth_red_pct:12.1, lat_izq_pct:26.9, lat_centro_pct:33.2, lat_der_pct:39.8}
+  },
+  "Jugador 14": {
+    "Sesión 1": {raqueta_usada:"Dunlop FX 500", velocidad:123.0, velocidad_prom:91.5, altura:1.07, servicio:85.5, erroresPct:14.5, errors:11, winners:20, rallyLargoPct:50.2, pct_profundos:80.8, depth_fondo_pct:62.8, depth_media_pct:18.0, depth_red_pct:19.2, lat_izq_pct:33.3, lat_centro_pct:32.2, lat_der_pct:34.5},
+    "Sesión 2": {raqueta_usada:"C10 EVO", velocidad:125.5, velocidad_prom:94.7, altura:1.2, servicio:87.9, erroresPct:12.1, errors:10, winners:22, rallyLargoPct:51.4, pct_profundos:80.6, depth_fondo_pct:62.2, depth_media_pct:18.4, depth_red_pct:19.4, lat_izq_pct:32.9, lat_centro_pct:32.4, lat_der_pct:34.7}
+  },
+  "Jugador 15": {
+    "Sesión 1": {raqueta_usada:"Tecnifibre TF-X1", velocidad:114.1, velocidad_prom:90.1, altura:1.4, servicio:83.4, erroresPct:16.6, errors:7, winners:24, rallyLargoPct:50.5, pct_profundos:90.5, depth_fondo_pct:67.5, depth_media_pct:23.0, depth_red_pct:9.6, lat_izq_pct:36.1, lat_centro_pct:36.4, lat_der_pct:27.6},
+    "Sesión 2": {raqueta_usada:"C10 PRO", velocidad:111.1, velocidad_prom:91.0, altura:1.35, servicio:86.5, erroresPct:13.5, errors:6, winners:26, rallyLargoPct:52.0, pct_profundos:90.1, depth_fondo_pct:66.8, depth_media_pct:23.3, depth_red_pct:9.9, lat_izq_pct:34.2, lat_centro_pct:36.6, lat_der_pct:29.2}
+  },
+  "Jugador 16": {
+    "Sesión 1": {raqueta_usada:"HEAD Radical MP", velocidad:125.6, velocidad_prom:80.2, altura:0.61, servicio:91.9, erroresPct:8.1, errors:8, winners:24, rallyLargoPct:53.5, pct_profundos:84.6, depth_fondo_pct:60.5, depth_media_pct:24.1, depth_red_pct:15.4, lat_izq_pct:30.3, lat_centro_pct:35.4, lat_der_pct:34.3},
+    "Sesión 2": {raqueta_usada:"V8 Pro", velocidad:129.1, velocidad_prom:81.4, altura:0.72, servicio:96.8, erroresPct:3.2, errors:7, winners:27, rallyLargoPct:55.3, pct_profundos:84.9, depth_fondo_pct:60.2, depth_media_pct:24.7, depth_red_pct:15.2, lat_izq_pct:30.5, lat_centro_pct:34.8, lat_der_pct:34.8}
+  },
+  "Jugador 17": {
+    "Sesión 1": {raqueta_usada:"Babolat Pure Strike", velocidad:109.7, velocidad_prom:79.7, altura:1.41, servicio:90.8, erroresPct:9.2, errors:8, winners:21, rallyLargoPct:51.9, pct_profundos:86.7, depth_fondo_pct:65.8, depth_media_pct:20.9, depth_red_pct:13.3, lat_izq_pct:37.0, lat_centro_pct:31.6, lat_der_pct:31.4},
+    "Sesión 2": {raqueta_usada:"VÖSTRA V1 PRO", velocidad:111.9, velocidad_prom:82.8, altura:1.35, servicio:94.2, erroresPct:5.8, errors:8, winners:23, rallyLargoPct:52.6, pct_profundos:86.8, depth_fondo_pct:65.8, depth_media_pct:21.0, depth_red_pct:13.2, lat_izq_pct:38.2, lat_centro_pct:30.5, lat_der_pct:31.3}
+  },
+  "Jugador 18": {
+    "Sesión 1": {raqueta_usada:"Yonex Ezone 98", velocidad:117.5, velocidad_prom:88.5, altura:1.53, servicio:83.9, erroresPct:16.1, errors:8, winners:21, rallyLargoPct:49.2, pct_profundos:71.4, depth_fondo_pct:34.5, depth_media_pct:36.9, depth_red_pct:28.6, lat_izq_pct:30.9, lat_centro_pct:40.0, lat_der_pct:29.1},
+    "Sesión 2": {raqueta_usada:"VÖSTRA V9", velocidad:119.9, velocidad_prom:90.7, altura:1.43, servicio:87.4, erroresPct:12.6, errors:7, winners:23, rallyLargoPct:50.3, pct_profundos:71.3, depth_fondo_pct:35.3, depth_media_pct:36.0, depth_red_pct:28.7, lat_izq_pct:30.8, lat_centro_pct:40.3, lat_der_pct:28.9}
+  }
+};
+
+function evaluarFramework(valor, excelente, aceptable){
+  if (excelente(valor)) return "avanzado";
+  if (aceptable(valor)) return "intermedio";
+  return "iniciador";
+}
+
+function clasificarNivel(jugadorId, d){
+  const nivel = NIVEL_JUGADOR_V2[jugadorId] || "INTERMEDIO";
+  const det = [
+    evaluarFramework(d.velocidad, v => v > 110, v => v >= 80 && v <= 110),
+    evaluarFramework(d.altura, v => v >= 0.6 && v <= 1.2, v => v > 1.2 && v <= 2.0),
+    evaluarFramework(d.servicio, v => v >= 75, v => v >= 55 && v < 75),
+    evaluarFramework(100 - d.erroresPct, v => v >= 80, v => v >= 65 && v < 80),
+    evaluarFramework(d.rallyLargoPct, v => v >= 30, v => v >= 12 && v < 30),
+    evaluarFramework(d.velocidad_prom, v => v > 65, v => v >= 40 && v <= 65)
+  ];
+  return {nivel, det};
+}
+
+function identificarOrientacion(d, prioridadManual){
+  if (prioridadManual && prioridadManual !== "auto") return prioridadManual;
+  const ratioErrorWinner = (d.errors + d.winners) > 0 ? d.errors / (d.errors + d.winners) : 1;
+  if (d.velocidad >= 100 && d.servicio >= 75 && d.altura <= 1.3){ return "control"; }
+  if (d.altura > 1.5 && d.servicio >= 60){ return "sensacion"; }
+  if (d.velocidad >= 90 && ratioErrorWinner >= 0.55){ return "sensacion"; }
+  if (d.velocidad < 80 || d.servicio < 55){ return "potencia"; }
+  if (ratioErrorWinner >= 0.5) return "sensacion";
+  if (d.servicio < 65) return "potencia";
+  return "control";
+}
+
+function quitarAcentos(s){
+  return s.normalize("NFD").replace(/[̀-ͯ]/g, "");
+}
+
+function desempateIniciador(filtrados, d){
+  const porNombre = n => filtrados.find(r => r.nombre === n) || filtrados[0];
+  if (d.velocidad < 65){
+    return d.erroresPct >= 40 ? porNombre("VÖSTRA V2") : porNombre("VÖSTRA 1 Power Arm");
+  }
+  if (d.velocidad < 72){
+    return d.erroresPct >= 40 ? porNombre("VÖSTRA V3") : porNombre("VÖSTRA V4");
+  }
+  return d.servicio >= 58 ? porNombre("XPLOSIVE") : porNombre("VÖSTRA V5");
+}
+
+function desempateAvanzado(filtrados, d){
+  const porNombre = n => filtrados.find(r => r.nombre === n) || filtrados[0];
+  if (d.erroresPct < 10) return porNombre("V8 Pro");
+  if (d.velocidad > 125) return porNombre("C10 PRO");
+  if (d.rallyLargoPct >= 50) return porNombre("C10 EVO");
+  const swingAmplio = (d.velocidad_prom / d.velocidad) >= 0.75;
+  if (swingAmplio) return porNombre("VÖSTRA V1 PRO");
+  return porNombre("VÖSTRA V9");
+}
+
+function elegirRaqueta(nivel, orientacion, d){
+  const mapa = {
+    "INICIADOR":       ["v1powerarm","v2","v3","v4","v5","xplosive"],
+    "INTERMEDIO":      ["v1os","v8_285"],
+    "INTERMEDIO ALTO": ["v7","v8_300","v1classic","v1evo","v1mp","v10"],
+    "AVANZADO":        ["c10evo","c10pro","v8pro","v1pro","v9"]
+  };
+
+  const candidatos = mapa[nivel].map(k => CATALOGO[k]);
+  const norm = o => quitarAcentos(o.toLowerCase());
+  let filtrados = candidatos.filter(r => norm(r.orientacion).includes(norm(orientacion)));
+  if (filtrados.length === 0) filtrados = candidatos;
+
+  let regla = null;
+
+  if (d.velocidad > 130){
+    const estables = filtrados.filter(r => r.pesoMin >= 300 || r.headHeavy);
+    if (estables.length){ filtrados = estables; regla = {tipo:"estabilidad", valor:d.velocidad}; }
+  }
+
+  let regla2Aplico = false;
+  if (d.erroresPct > 35){
+    const densos = filtrados.filter(r => r.denso);
+    if (densos.length){ filtrados = densos; regla2Aplico = true; if (!regla) regla = {tipo:"densidad", valor:d.erroresPct}; }
+  }
+
+  if (!regla2Aplico && d.servicio !== null && d.servicio < 45){
+    const abiertos = filtrados.filter(r => !r.denso);
+    if (abiertos.length){ filtrados = abiertos; if (!regla) regla = {tipo:"patronAbierto", valor:d.servicio}; }
+  }
+
+  if (filtrados.length === 1) return {raqueta: filtrados[0], regla};
+
+  if (nivel === "INICIADOR"){
+    return {raqueta: desempateIniciador(filtrados, d), regla: regla || {tipo:"perfilIniciador"}};
+  }
+  if (nivel === "AVANZADO"){
+    return {raqueta: desempateAvanzado(filtrados, d), regla: regla || {tipo:"perfilAvanzado"}};
+  }
+
+  if (orientacion === "control"){
+    filtrados = [...filtrados].sort((a,b) => b.patronSegundo - a.patronSegundo);
+  } else {
+    filtrados = [...filtrados].sort((a,b) => a.patronSegundo - b.patronSegundo);
+  }
+  return {raqueta: filtrados[0], regla};
+}
+
+function fraseDesempate(regla){
+  if (!regla) return "";
+  if (regla.tipo === "estabilidad"){
+    return ` Además, la velocidad de golpe (<b>${regla.valor} km/h</b>) activó nuestra regla de estabilidad: priorizamos una raqueta más pesada o head-heavy para controlar mejor el impacto.`;
+  }
+  if (regla.tipo === "densidad"){
+    return ` Además, el porcentaje de golpes fuera o a la red (<b>${regla.valor.toFixed(1)}%</b>) activó nuestra regla de densidad: priorizamos un patrón de encordado más denso (18x20) para sumar control.`;
+  }
+  if (regla.tipo === "patronAbierto"){
+    return ` Además, la efectividad de servicio (<b>${regla.valor}%</b>) activó nuestra regla de patrón abierto: priorizamos un encordado más abierto para ayudar a sumar spin y consistencia.`;
+  }
+  if (regla.tipo === "perfilIniciador"){
+    return ` Dentro de las raquetas de iniciación, la velocidad de golpe y el porcentaje de golpes fuera/red definieron cuál de las 6 opciones se ajusta mejor al perfil.`;
+  }
+  if (regla.tipo === "perfilAvanzado"){
+    return ` Dentro de las raquetas de control para avanzados, la precisión, velocidad y agilidad en peloteos largos definieron cuál de las 5 opciones se ajusta mejor al perfil.`;
+  }
+  return "";
+}
+
+function recomendarEncordado(orientacion, patronTexto){
+  const denso = patronTexto.toLowerCase().includes("18x20") || patronTexto.toLowerCase().includes("denso");
+
+  if (orientacion === "potencia"){
+    return {
+      cuerda:"Völkl V-Icon (Multifilamento)",
+      cuerdaSub:"Maximiza potencia y absorción de impacto con mínimo esfuerzo de swing.",
+      tension:"48 – 52 lbs",
+      tensionSub:"Tensión baja-media: favorece pocketing y velocidad de salida de bola."
+    };
+  }
+  if (orientacion === "sensacion"){
+    return {
+      cuerda:"Völkl V-Icon Premium (Multifilamento)",
+      cuerdaSub:"Prioriza tacto y protección de brazo sin sacrificar potencia.",
+      tension:"50 – 54 lbs",
+      tensionSub:"Tensión intermedia: equilibra confort con consistencia de control."
+    };
+  }
+  return {
+    cuerda: denso ? "Völkl Monofilamento / Híbrido de control" : "Völkl Monofilamento",
+    cuerdaSub: denso ? "El patrón denso ya aporta control; la cuerda debe sumar durabilidad." : "Refuerza precisión direccional en un patrón abierto.",
+    tension:"52 – 56 lbs",
+    tensionSub:"Tensión alta: máxima precisión direccional para golpe de swing largo."
+  };
+}
+
+function etiquetaOrientacion(o){
+  return {potencia:"Potencia", sensacion:"Sensación", control:"Control"}[o] || o;
+}
+
+function poblarSelectorJugadores(){
+  const sel = document.getElementById('jugadorSelect');
+  Object.keys(DATOS_JUGADORES).forEach(j => {
+    const opt = document.createElement('option');
+    opt.value = j;
+    opt.textContent = j.replace('Jugador', 'Jugador #');
+    sel.appendChild(opt);
+  });
+}
+
+function nivelClase(r){
+  if (r === "avanzado") return "avanzado";
+  if (r === "intermedio") return "intermedio";
+  return "iniciador";
+}
+
+function mostrarDatosCrudos(d, nivelDetalle){
+  const filas = [
+    ["Velocidad máxima de golpe", `${d.velocidad} km/h`, nivelDetalle.det[0]],
+    ["Margen sobre la red", `${d.altura} m`, nivelDetalle.det[1]],
+    ["Consistencia (golpes dentro)", `${d.servicio}%`, nivelDetalle.det[2]],
+    ["Control de errores", `${(100 - d.erroresPct).toFixed(1)}%`, nivelDetalle.det[3]],
+    ["Peloteos largos ganados (9+ golpes)", `${d.rallyLargoPct}%`, nivelDetalle.det[4]],
+    ["Velocidad promedio de golpe", `${d.velocidad_prom} km/h`, nivelDetalle.det[5]]
+  ];
+
+  document.getElementById('datosPanel').innerHTML = filas.map(f =>
+    `<div class="datos-row"><span class="k">${f[0]}</span><span class="v ${nivelClase(f[2])}">${f[1]}</span></div>`
+  ).join('') + `<div class="fuente-tag">Fuente: Baseline Vision · DATOS S1 Y S2 V2.xlsx (hoja Sesiones) · sesión de prueba (~30 min)</div>`;
+
+  document.getElementById('emptyStateLeft').style.display = 'none';
+  document.getElementById('datosPanel').style.display = 'block';
+}
+
+function fortalezaYDebilidad(d, det){
+  const etiquetas = [
+    ["Velocidad máxima de golpe", d.velocidad, "km/h"],
+    ["Margen sobre la red", d.altura, "m"],
+    ["Consistencia (golpes dentro)", d.servicio, "%"],
+    ["Control de errores", +(100 - d.erroresPct).toFixed(1), "%"],
+    ["Peloteos largos ganados", d.rallyLargoPct, "%"],
+    ["Velocidad promedio de golpe", d.velocidad_prom, "km/h"]
+  ];
+  let fortalezaIdx = det.findIndex(r => r === "avanzado");
+  if (fortalezaIdx === -1) fortalezaIdx = det.findIndex(r => r === "intermedio");
+  let debilidadIdx = det.length - 1 - [...det].reverse().findIndex(r => r === "iniciador");
+  if (!det.includes("iniciador")) debilidadIdx = det.findIndex(r => r === "intermedio");
+  if (fortalezaIdx === -1) fortalezaIdx = 0;
+  if (debilidadIdx === -1 || debilidadIdx >= det.length) debilidadIdx = det.length - 1;
+
+  return {
+    fortaleza: `${etiquetas[fortalezaIdx][0]} (${etiquetas[fortalezaIdx][1]}${etiquetas[fortalezaIdx][2]})`,
+    debilidad: `${etiquetas[debilidadIdx][0]} (${etiquetas[debilidadIdx][1]}${etiquetas[debilidadIdx][2]})`
+  };
+}
+
+function posicionJuego(d){
+  if (d.depth_red_pct >= 20) return "Jugador de ataque en red";
+  if (d.depth_fondo_pct >= 60) return "Jugador de fondo";
+  return "Jugador de transición";
+}
+
+function longitudSwing(d){
+  const ratio = d.velocidad_prom / d.velocidad;
+  if (ratio >= 0.75) return "swing largo";
+  if (ratio >= 0.60) return "swing medio-largo";
+  if (ratio >= 0.45) return "swing medio";
+  return "swing corto";
+}
+
+function calidadImpacto(d){
+  return d.erroresPct < 25 ? "impacto centrado" : "impacto descentrado";
+}
+
+function construirFrasePerfil(d){
+  const posicion = posicionJuego(d);
+  const swing = longitudSwing(d);
+  const pctProfundos = Math.round(d.pct_profundos);
+  const impacto = calidadImpacto(d);
+  const conector = impacto === "impacto descentrado" ? "pero con" : "y con";
+  return `${posicion} con velocidad de golpe de <b>${d.velocidad} km/h</b> y ${swing}. ` +
+         `Detectamos un <b>${pctProfundos}%</b> de golpes profundos ${conector} <b>${impacto}</b>.`;
+}
+
+let currentJugador = null;
+let currentSesion = null;
+
+function mostrarDiagnostico(){
+  const jugador = document.getElementById('jugadorSelect').value;
+  const sesion = document.getElementById('sesionSelect').value;
+  currentJugador = jugador || null;
+  currentSesion = sesion;
+
+  if (!jugador){
+    document.getElementById('emptyState').style.display = 'flex';
+    document.getElementById('resultPanel').classList.remove('show');
+    document.getElementById('emptyStateLeft').style.display = 'flex';
+    document.getElementById('datosPanel').style.display = 'none';
+    return;
+  }
+
+  const d = DATOS_JUGADORES[jugador][sesion];
+  const {nivel, det} = clasificarNivel(jugador, d);
+  const orientacion = identificarOrientacion(d, "auto");
+  const {raqueta, regla} = elegirRaqueta(nivel, orientacion, d);
+  const encordado = recomendarEncordado(orientacion, raqueta.specs[2]);
+  const {fortaleza, debilidad} = fortalezaYDebilidad(d, det);
+  const nombreReal = NOMBRE_REAL_JUGADOR[jugador] || jugador;
+
+  mostrarDatosCrudos(d, {det});
+
+  document.getElementById('entregableHeader').innerHTML =
+    `DIAGNÓSTICO DE RENDIMIENTO VÖLKL<span class="sub">${nombreReal.toUpperCase()} · ${jugador.toUpperCase()}</span>`;
+
+  document.getElementById('perfilTexto').innerHTML = construirFrasePerfil(d);
+
+  document.getElementById('badges').innerHTML =
+    `<span class="badge badge-orient">Orientación: ${etiquetaOrientacion(orientacion)}</span>`;
+
+  document.getElementById('nivelGrande').textContent = nivel;
+
+  document.getElementById('racketName').textContent = raqueta.nombre;
+  document.getElementById('racketSpec').innerHTML = raqueta.specs.map(s => `<span class="spec-chip">${s}</span>`).join('');
+  document.getElementById('racketWhy').innerHTML = raqueta.why + fraseDesempate(regla);
+
+  document.getElementById('cuerdaValue').textContent = encordado.cuerda;
+  document.getElementById('cuerdaSub').textContent = encordado.cuerdaSub;
+  document.getElementById('tensionValue').textContent = encordado.tension;
+  document.getElementById('tensionSub').textContent = encordado.tensionSub;
+
+  const pasos = [
+    `Prueba esta raqueta en <b>2-3 sesiones</b> antes de sacar conclusiones definitivas.`,
+    `Ajusta la tensión según cómo se sienta el control: si hay mucho <b>"pocketing"</b>, sube la tensión; si se siente muy dura, bájala.`,
+    `Trabaja la debilidad detectada — <b>${debilidad}</b>. La raqueta da la base; la consistencia se construye en cancha.`
+  ];
+  document.getElementById('proximosPasos').innerHTML = pasos.map(p => `<li>${p}</li>`).join('');
+
+  document.getElementById('emptyState').style.display = 'none';
+  document.getElementById('resultPanel').classList.add('show');
+}
+
+poblarSelectorJugadores();
+
+const METRICA_META = {
+  velocidad:      {label:"Velocidad máxima de golpe",    unidad:"km/h"},
+  velocidad_prom: {label:"Velocidad promedio de golpe",  unidad:"km/h"},
+  altura:         {label:"Margen sobre la red",          unidad:"m"},
+  servicio:       {label:"Consistencia (golpes dentro)", unidad:"%"},
+  erroresPct:     {label:"Errores (fuera + red)",        unidad:"%"},
+  rallyLargoPct:  {label:"Peloteos largos ganados",      unidad:"%"}
+};
+
+let chartHistorialInst = null;
+let chartComparativaInst = null;
+
+function abrirMetricas(){
+  if (!currentJugador) return;
+  document.getElementById('modalPlayerName').textContent = currentJugador.replace('Jugador', 'Jugador #');
+  document.getElementById('modalOverlay').classList.add('show');
+  cambiarTab('historial');
+}
+
+function cerrarMetricas(){
+  document.getElementById('modalOverlay').classList.remove('show');
+}
+
+function cerrarMetricasClick(e){
+  if (e.target.id === 'modalOverlay') cerrarMetricas();
+}
+
+function cambiarTab(tab){
+  const tabs = {
+    historial:    ['tabHistorial', 'tabPanelHistorial', renderHistorial],
+    comparativa:  ['tabComparativa', 'tabPanelComparativa', renderComparativa],
+    heatmap:      ['tabHeatmap', 'tabPanelHeatmap', renderHeatmap]
+  };
+  Object.values(tabs).forEach(([btnId, panelId]) => {
+    document.getElementById(btnId).classList.remove('active');
+    document.getElementById(panelId).style.display = 'none';
+  });
+  const [btnId, panelId, renderFn] = tabs[tab];
+  document.getElementById(btnId).classList.add('active');
+  document.getElementById(panelId).style.display = 'block';
+  renderFn();
+}
+
+function renderHistorial(){
+  if (!currentJugador) return;
+  const metrica = document.getElementById('metricaHistorialSelect').value;
+  const meta = METRICA_META[metrica];
+
+  const s1 = DATOS_JUGADORES[currentJugador]["Sesión 1"][metrica];
+  const s2 = DATOS_JUGADORES[currentJugador]["Sesión 2"][metrica];
+
+  const ctx = document.getElementById('chartHistorial').getContext('2d');
+  if (chartHistorialInst) chartHistorialInst.destroy();
+
+  chartHistorialInst = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: ['Sesión 1 (raqueta personal)', 'Sesión 2 (Völkl)'],
+      datasets: [{
+        label: `${meta.label} (${meta.unidad})`,
+        data: [s1, s2],
+        borderColor: '#fedd00',
+        backgroundColor: 'rgba(254,221,0,.15)',
+        pointBackgroundColor: '#fedd00',
+        pointBorderColor: '#000',
+        pointRadius: 6,
+        pointHoverRadius: 8,
+        borderWidth: 2,
+        tension: 0.3,
+        fill: true
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: {labels: {color: '#ffffff', font: {family:"'Source Sans 3'", weight:600}}},
+        tooltip: {backgroundColor:'#1a1a1a', titleColor:'#fedd00', bodyColor:'#fff', borderColor:'rgba(255,255,255,.16)', borderWidth:1}
+      },
+      scales: {
+        x: {ticks:{color:'rgba(255,255,255,.6)', font:{family:"'Source Sans 3'"}}, grid:{color:'rgba(255,255,255,.06)'}},
+        y: {ticks:{color:'rgba(255,255,255,.6)', font:{family:"'Source Sans 3'"}}, grid:{color:'rgba(255,255,255,.06)'}}
+      }
+    }
+  });
+}
+
+function renderComparativa(){
+  if (!currentJugador) return;
+  const s1 = DATOS_JUGADORES[currentJugador]["Sesión 1"];
+  const s2 = DATOS_JUGADORES[currentJugador]["Sesión 2"];
+  const keys = Object.keys(METRICA_META);
+
+  const ctx = document.getElementById('chartComparativa').getContext('2d');
+  if (chartComparativaInst) chartComparativaInst.destroy();
+
+  chartComparativaInst = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: keys.map(k => `${METRICA_META[k].label} (${METRICA_META[k].unidad})`),
+      datasets: [
+        {
+          label: 'Raqueta personal (Sesión 1)',
+          data: keys.map(k => s1[k]),
+          backgroundColor: 'rgba(255,255,255,.35)',
+          borderColor: 'rgba(255,255,255,.6)',
+          borderWidth: 1,
+          borderRadius: 2
+        },
+        {
+          label: 'Raqueta Völkl (Sesión 2)',
+          data: keys.map(k => s2[k]),
+          backgroundColor: '#fedd00',
+          borderColor: '#fedd00',
+          borderWidth: 1,
+          borderRadius: 2
+        }
+      ]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: {labels: {color: '#ffffff', font: {family:"'Source Sans 3'", weight:600}}},
+        tooltip: {backgroundColor:'#1a1a1a', titleColor:'#fedd00', bodyColor:'#fff', borderColor:'rgba(255,255,255,.16)', borderWidth:1}
+      },
+      scales: {
+        x: {ticks:{color:'rgba(255,255,255,.6)', font:{family:"'Source Sans 3'"}}, grid:{color:'rgba(255,255,255,.06)'}},
+        y: {ticks:{color:'rgba(255,255,255,.75)', font:{family:"'Source Sans 3'", size:11}}, grid:{color:'rgba(255,255,255,.03)'}}
+      }
+    }
+  });
+}
+
+const HEATMAP_DEPTH_Y = [[30, 171.2], [171.2, 313.5], [313.5, 458]];
+const HEATMAP_LAT_X   = [[79.5, 178.2], [178.2, 276.8], [276.8, 375.5]];
+
+function pickWeightedZone(weights){
+  const total = weights.reduce((a, b) => a + b, 0) || 1;
+  let r = Math.random() * total;
+  for (let i = 0; i < weights.length; i++){
+    if (r < weights[i]) return i;
+    r -= weights[i];
+  }
+  return weights.length - 1;
+}
+
+function renderHeatmap(){
+  if (!currentJugador) return;
+  const d = DATOS_JUGADORES[currentJugador][currentSesion];
+
+  const depthWeights = [d.depth_red_pct, d.depth_media_pct, d.depth_fondo_pct];
+  const latWeights = [d.lat_izq_pct, d.lat_centro_pct, d.lat_der_pct];
+
+  const n = 15 + Math.floor(Math.random() * 6);
+  let svgPoints = '';
+  for (let i = 0; i < n; i++){
+    const depthIdx = pickWeightedZone(depthWeights);
+    const latIdx = pickWeightedZone(latWeights);
+    const [y0, y1] = HEATMAP_DEPTH_Y[depthIdx];
+    const [x0, x1] = HEATMAP_LAT_X[latIdx];
+    const cx = x0 + Math.random() * (x1 - x0);
+    const cy = y0 + Math.random() * (y1 - y0);
+    svgPoints += `<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="24" fill="url(#heatDot)"/>`;
+  }
+
+  const g = document.getElementById('heatPoints');
+  g.setAttribute('style', 'mix-blend-mode:screen;');
+  g.innerHTML = svgPoints;
+
+  renderJomaReco(currentJugador, d);
+}
+
+const JOMA_MODELOS = {
+  "INICIADOR":        {modelo:"T.SET", nota:"Línea de entrada, pensada para uso no profesional / jugadores que no exigen mucho al calzado."},
+  "INTERMEDIO":        {modelo:"T.MASTER 1000", nota:"Sistema de ventilación VTS, Glove System para comodidad y menor peso, suela con tecnología Durability (alta resistencia a la abrasión) — para jugadores frecuentes sin ser de alta competición."},
+  "INTERMEDIO ALTO":   {modelo:"T.MASTER 1000", nota:"Sistema de ventilación VTS, Glove System para comodidad y menor peso, suela con tecnología Durability (alta resistencia a la abrasión) — para jugadores frecuentes sin ser de alta competición."},
+  "AVANZADO":          {modelo:"T.ACE PRO", nota:"Mediasuela FULL DUAL PULSOR (Phylon doble capa) con sistema REBOUND para amortiguación e impulso — diseñada para alta competición y jugadores exigentes."}
+};
+
+function renderJomaReco(jugadorId, d){
+  const {nivel} = clasificarNivel(jugadorId, d);
+  const m = JOMA_MODELOS[nivel] || JOMA_MODELOS["INTERMEDIO"];
+  document.getElementById('jomaReco').innerHTML = `
+    <div class="config-box">
+      <div class="label">Joma ${m.modelo} · versión All Court</div>
+      <div class="value">${m.nota}</div>
+      <div class="sub">También disponible en versión Clay. Precio, imagen y disponibilidad actuales en la
+        <a href="https://www.joma-sport.com/es_MX/deporte/tenis/calzado/" target="_blank" rel="noopener" style="color:var(--gold);">tienda oficial Joma</a>.
+      </div>
+    </div>`;
+}
+</script>
+
+</body>
+</html>
