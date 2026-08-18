@@ -3,10 +3,10 @@
 {
   "name": "V Fitter Ai Volkl",
   "schemaVersion": 1,
-  "description": "V-Fitter AI: demo interactivo de fitting de raquetas Völkl Club. Selecciona un jugador y sesión para ver diagnóstico de nivel, orientación de juego, raqueta recomendada y configuración de encordado, basado en datos de Baseline Vision (DATOS S1 Y S2 V2.xlsx)."
+  "description": "V-Fitter AI: interactive racket-fitting demo for Völkl Club. Select a player and session to see a level diagnosis, playing orientation, recommended racket, and string setup, based on Baseline Vision data (DATOS S1 Y S2 V2.xlsx)."
 }
 </script>
-<html lang="es">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -217,20 +217,6 @@
   .empty-state .hex{font-size:44px; color:var(--gold); opacity:.5; margin-bottom:16px;}
   .empty-state p{font-weight:300; font-size:13px; max-width:280px;}
 
-  .entregable-header{
-    background:var(--surf2);
-    border:1px solid var(--border-strong);
-    border-radius:4px;
-    padding:16px 18px;
-    font-weight:900; text-transform:uppercase; letter-spacing:.08em;
-    font-size:13px; text-align:center;
-    color:var(--gold);
-  }
-  .entregable-header .sub{
-    display:block; color:var(--white); font-size:11px; font-weight:700;
-    letter-spacing:.12em; margin-top:4px;
-  }
-
   .datos-row{
     display:flex; justify-content:space-between; align-items:center;
     padding:12px 0; border-bottom:1px solid var(--border);
@@ -287,77 +273,22 @@
 
   ::placeholder{color:rgba(255,255,255,.25);}
 
-  /* ---------- BOTÓN VER MÉTRICAS ---------- */
-  .kicker-row{
-    display:flex; align-items:center; justify-content:space-between;
-    flex-wrap:wrap; gap:10px; margin-bottom:6px;
-  }
-  .btn-metricas{
-    display:inline-flex; align-items:center; gap:6px;
-    background:transparent; color:var(--gold);
-    border:1px solid rgba(254,221,0,.4); border-radius:3px;
-    padding:7px 12px;
-    font-family:inherit; font-weight:900; text-transform:uppercase; letter-spacing:.08em; font-size:10px;
-    cursor:pointer;
-    transition:background var(--ease), border-color var(--ease);
-  }
-  .btn-metricas:hover{background:rgba(254,221,0,.1); border-color:var(--gold);}
-  .btn-metricas .hex{font-size:11px;}
-
-  /* ---------- MODAL ---------- */
-  .modal-overlay{
-    display:none;
-    position:fixed; inset:0; z-index:100;
-    background:rgba(0,0,0,.75);
-    backdrop-filter:blur(4px);
-    align-items:center; justify-content:center;
-    padding:24px;
-  }
-  .modal-overlay.show{display:flex; animation:fadeUp .22s var(--ease);}
-
-  .modal-box{
-    width:100%; max-width:800px; max-height:88vh;
-    overflow-y:auto;
-    background:var(--surf1);
-    border:1px solid var(--border-strong);
-    border-top:4px solid var(--gold);
-    border-radius:6px;
-    padding:28px;
-  }
-
-  .modal-header{
-    display:flex; align-items:flex-start; justify-content:space-between;
-    margin-bottom:20px;
-  }
-  .modal-title{
-    font-size:20px; font-weight:900; text-transform:uppercase; letter-spacing:.02em;
-    color:var(--white);
-  }
-  .modal-close{
-    background:var(--surf2); border:1px solid var(--border-strong); border-radius:3px;
-    color:var(--white); width:32px; height:32px;
-    font-size:14px; cursor:pointer;
-    transition:border-color var(--ease), color var(--ease);
-  }
-  .modal-close:hover{border-color:var(--gold); color:var(--gold);}
-
-  .modal-tabs{
+  /* ---------- PESTAÑAS DE MÉTRICAS ---------- */
+  .metric-tabs{
     display:flex; gap:0;
     border:1px solid var(--border-strong); border-radius:4px;
-    overflow:hidden; margin-bottom:22px;
+    overflow:hidden; margin-bottom:6px;
     width:fit-content;
   }
-  .modal-tab{
+  .metric-tab{
     background:transparent; color:rgba(255,255,255,.55);
     border:none; padding:10px 18px;
     font-family:inherit; font-weight:900; text-transform:uppercase; letter-spacing:.08em; font-size:11px;
     cursor:pointer;
     transition:background var(--ease), color var(--ease);
   }
-  .modal-tab + .modal-tab{border-left:1px solid var(--border-strong);}
-  .modal-tab.active{background:var(--gold); color:var(--black);}
-
-  .modal-body .field{margin-bottom:18px;}
+  .metric-tab + .metric-tab{border-left:1px solid var(--border-strong);}
+  .metric-tab.active{background:var(--gold); color:var(--black);}
 
   .chart-wrap{
     background:var(--surf2); border:1px solid var(--border); border-radius:4px;
@@ -374,9 +305,8 @@
 </nav>
 
 <div class="hero">
-  <div class="eyebrow">Völkl Club · Digital Fitting Inteligente</div>
-  <h1>Tu <span>raqueta ideal</span>, calculada por Baseline Vision</h1>
-  <p>El agente lee automáticamente las métricas capturadas por Baseline Vision durante tu sesión de prueba (con tu raqueta personal) y las cruza contra los frameworks de rendimiento y la ficha técnica del catálogo Völkl. Selecciona el jugador para ver su diagnóstico.</p>
+  <div class="eyebrow">Völkl Club · Smart Digital Fitting</div>
+  <h1>Your <span>ideal racket</span></h1>
 </div>
 
 <div class="wrap">
@@ -384,19 +314,19 @@
   <div id="postLeadSection">
 
   <div class="card gold-edge" style="margin-bottom:18px;">
-    <h2><span class="hex">⬡</span> Selecciona el perfil</h2>
+    <h2><span class="hex">⬡</span> Select the profile</h2>
     <div class="row2" style="align-items:end;" id="selectorRow">
       <div class="field" style="margin-bottom:0;">
-        <label>Jugador (dato capturado por Baseline Vision)</label>
+        <label>Player</label>
         <select id="jugadorSelect" onchange="mostrarDiagnostico()">
-          <option value="">— Selecciona un número de jugador —</option>
+          <option value="">— Select a player number —</option>
         </select>
       </div>
       <div class="field" style="margin-bottom:0;">
-        <label>Sesión evaluada</label>
+        <label>Evaluated session</label>
         <select id="sesionSelect" onchange="mostrarDiagnostico()">
-          <option value="Sesión 1">Sesión 1 — Raqueta personal (baseline)</option>
-          <option value="Sesión 2">Sesión 2 — Con raqueta Völkl</option>
+          <option value="Sesión 1">Session 1 — Personal racket (baseline)</option>
+          <option value="Sesión 2">Session 2 — With Völkl racket</option>
         </select>
       </div>
     </div>
@@ -406,60 +336,101 @@
 
     <!-- PERFIL / DATOS CRUDOS -->
     <div class="card">
-      <h2><span class="hex">⬡</span> Datos crudos de la prueba</h2>
+      <h2><span class="hex">⬡</span> Raw test data</h2>
       <div class="empty-state" id="emptyStateLeft">
         <div class="hex">⬡</div>
-        <p>Selecciona un jugador arriba para ver sus métricas capturadas por Baseline Vision.</p>
+        <p>Select a player above to see their metrics captured by Baseline Vision.</p>
       </div>
       <div id="datosPanel" style="display:none;"></div>
+
+      <div id="metricasPanel" style="display:none;">
+        <div class="metric-tabs" style="margin-top:28px;">
+          <button class="metric-tab active" id="tabHistorial" onclick="cambiarTabMetrica('historial')">History</button>
+          <button class="metric-tab" id="tabComparativa" onclick="cambiarTabMetrica('comparativa')">Racket vs Racket</button>
+          <button class="metric-tab" id="tabHeatmap" onclick="cambiarTabMetrica('heatmap')">Heat Map</button>
+        </div>
+
+        <div class="metric-panel" id="panelHistorial">
+          <div class="field" style="max-width:320px; margin-top:18px;">
+            <label>Metric to display</label>
+            <select id="metricaHistorialSelect" onchange="renderHistorial()">
+              <option value="velocidad_prom">Average serve speed (km/h)</option>
+              <option value="velocidad">Max serve speed (km/h)</option>
+              <option value="altura">Clearance (m)</option>
+              <option value="servicio">Acceleration (rpm)</option>
+              <option value="rallyLargoPct">Air speed (km/h)</option>
+            </select>
+          </div>
+          <div class="chart-wrap"><canvas id="chartHistorial"></canvas></div>
+          <div class="fuente-tag">X axis: test session (date). Y axis: average result of the selected metric.</div>
+        </div>
+
+        <div class="metric-panel" id="panelComparativa" style="display:none;">
+          <div class="chart-wrap chart-wrap-tall" style="margin-top:18px;"><canvas id="chartComparativa"></canvas></div>
+          <div class="fuente-tag">
+            <span style="color:rgba(255,255,255,.6);">●</span> Personal racket (Session 1) &nbsp;&nbsp;
+            <span style="color:var(--gold);">●</span> Völkl racket (Session 2)
+          </div>
+        </div>
+
+        <div class="metric-panel" id="panelHeatmap" style="display:none;">
+          <div class="chart-wrap chart-wrap-tall" style="margin-top:18px; display:flex; align-items:center; justify-content:center; padding:14px;">
+            <svg id="heatmapSvg" viewBox="0 0 460 500" style="width:100%; max-width:340px; height:auto; display:block;">
+              <defs>
+                <radialGradient id="heatDot" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stop-color="#fedd00" stop-opacity="0.35"/>
+                  <stop offset="100%" stop-color="#fedd00" stop-opacity="0"/>
+                </radialGradient>
+              </defs>
+              <rect x="30" y="30" width="395" height="428" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="2"/>
+              <line x1="79.5" y1="30" x2="79.5" y2="458" stroke="rgba(255,255,255,.5)" stroke-width="2"/>
+              <line x1="375.5" y1="30" x2="375.5" y2="458" stroke="rgba(255,255,255,.5)" stroke-width="2"/>
+              <line x1="30" y1="30" x2="425" y2="30" stroke="#fedd00" stroke-width="3"/>
+              <line x1="79.5" y1="260" x2="375.5" y2="260" stroke="rgba(255,255,255,.5)" stroke-width="2"/>
+              <line x1="227.5" y1="30" x2="227.5" y2="260" stroke="rgba(255,255,255,.35)" stroke-width="1.5"/>
+              <line x1="227.5" y1="452" x2="227.5" y2="458" stroke="rgba(255,255,255,.5)" stroke-width="2"/>
+              <g id="heatPoints"></g>
+            </svg>
+          </div>
+          <div class="fuente-tag">Points simulated from the player's real shot distribution (depth and lateral zone recorded by Baseline Vision). These are not individually measured shots.</div>
+        </div>
+      </div>
     </div>
 
     <!-- RESULT: ENTREGABLE -->
     <div class="card" id="resultCard">
-      <h2><span class="hex">⬡</span> Diagnóstico V-Fitter</h2>
+      <h2><span class="hex">⬡</span> V-Fitter Diagnosis</h2>
 
       <div class="empty-state" id="emptyState">
         <div class="hex">⬡</div>
-        <p>El diagnóstico personalizado aparecerá aquí en cuanto selecciones un número de jugador.</p>
+        <p>Your personalized diagnosis will appear here once you select a player number.</p>
       </div>
 
       <div id="resultPanel">
-        <div class="entregable-header" id="entregableHeader"></div>
+        <div id="badges" style="margin-top:0;"></div>
 
-        <div class="kicker-row" style="margin-top:18px;">
-          <div class="kicker" style="margin-bottom:0;">Perfil en cancha</div>
-          <button class="btn-metricas" onclick="abrirMetricas()">
-            <span class="hex">⬡</span> Ver todas las métricas
-          </button>
-        </div>
-        <div class="profile-line" id="perfilTexto"></div>
-
-        <div id="badges"></div>
-
-        <div class="kicker" style="margin-top:20px;">Nivel de juego</div>
+        <div class="kicker" style="margin-top:20px;">Playing level</div>
         <div id="nivelGrande" style="font-size:22px; font-weight:900; text-transform:uppercase; letter-spacing:.02em; color:var(--gold);"></div>
 
-        <div class="kicker" style="margin-top:20px;">Raqueta ideal</div>
+        <div class="kicker" style="margin-top:20px;">Ideal racket</div>
         <div class="racket-name" id="racketName"></div>
         <div class="racket-spec" id="racketSpec"></div>
 
-        <div class="kicker" style="margin-top:16px;">Por qué se recomienda</div>
+        <div class="kicker" style="margin-top:16px;">Why it's recommended</div>
         <div class="why" id="racketWhy"></div>
 
         <div class="config-box">
-          <div class="label">Cuerda recomendada</div>
+          <div class="label">Recommended string</div>
           <div class="value" id="cuerdaValue"></div>
           <div class="sub" id="cuerdaSub"></div>
         </div>
 
         <div class="config-box">
-          <div class="label">Tensión sugerida</div>
+          <div class="label">Suggested tension</div>
           <div class="value" id="tensionValue"></div>
           <div class="sub" id="tensionSub"></div>
         </div>
 
-        <div class="kicker" style="margin-top:20px;">Próximos pasos</div>
-        <ol class="pasos-list" id="proximosPasos"></ol>
       </div>
     </div>
 
@@ -469,154 +440,86 @@
 </div>
 
 <footer>
-  <span>V-Fitter AI · Völkl Club — recomendación basada en datos, no en comisión.</span>
+  <span>V-Fitter AI · Völkl Club — data-based recommendation, not commission-based.</span>
   <span class="wordmark">VÖLKL</span>
 </footer>
-
-<!-- MODAL: TODAS LAS MÉTRICAS -->
-<div class="modal-overlay" id="modalOverlay" onclick="cerrarMetricasClick(event)">
-  <div class="modal-box">
-    <div class="modal-header">
-      <div>
-        <div class="kicker" style="margin-bottom:4px;">Todas las métricas</div>
-        <div class="modal-title" id="modalPlayerName">—</div>
-      </div>
-      <button class="modal-close" onclick="cerrarMetricas()">✕</button>
-    </div>
-
-    <div class="modal-tabs">
-      <button class="modal-tab active" id="tabHistorial" onclick="cambiarTab('historial')">Historial</button>
-      <button class="modal-tab" id="tabComparativa" onclick="cambiarTab('comparativa')">Raqueta vs Raqueta</button>
-      <button class="modal-tab" id="tabHeatmap" onclick="cambiarTab('heatmap')">Heat Map</button>
-    </div>
-
-    <div class="modal-body" id="tabPanelHistorial">
-      <div class="field" style="max-width:320px;">
-        <label>Métrica a visualizar</label>
-        <select id="metricaHistorialSelect" onchange="renderHistorial()">
-          <option value="velocidad">Velocidad máxima de golpe (km/h)</option>
-          <option value="velocidad_prom">Velocidad promedio de golpe (km/h)</option>
-          <option value="altura">Margen sobre la red (m)</option>
-          <option value="servicio">Consistencia — golpes dentro (%)</option>
-          <option value="erroresPct">Errores — fuera + red (%)</option>
-          <option value="rallyLargoPct">Peloteos largos ganados (%)</option>
-        </select>
-      </div>
-      <div class="chart-wrap"><canvas id="chartHistorial"></canvas></div>
-      <div class="fuente-tag">Eje X: sesión de prueba (fecha). Eje Y: resultado promedio de la métrica seleccionada.</div>
-    </div>
-
-    <div class="modal-body" id="tabPanelComparativa" style="display:none;">
-      <div class="chart-wrap chart-wrap-tall"><canvas id="chartComparativa"></canvas></div>
-      <div class="fuente-tag">
-        <span style="color:rgba(255,255,255,.6);">●</span> Raqueta personal (Sesión 1) &nbsp;&nbsp;
-        <span style="color:var(--gold);">●</span> Raqueta Völkl (Sesión 2)
-      </div>
-    </div>
-
-    <div class="modal-body" id="tabPanelHeatmap" style="display:none;">
-      <div class="chart-wrap chart-wrap-tall" style="display:flex; align-items:center; justify-content:center; padding:14px;">
-        <svg id="heatmapSvg" viewBox="0 0 460 500" style="width:100%; max-width:340px; height:auto; display:block;">
-          <defs>
-            <radialGradient id="heatDot" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stop-color="#fedd00" stop-opacity="0.35"/>
-              <stop offset="100%" stop-color="#fedd00" stop-opacity="0"/>
-            </radialGradient>
-          </defs>
-          <rect x="30" y="30" width="395" height="428" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="2"/>
-          <line x1="79.5" y1="30" x2="79.5" y2="458" stroke="rgba(255,255,255,.5)" stroke-width="2"/>
-          <line x1="375.5" y1="30" x2="375.5" y2="458" stroke="rgba(255,255,255,.5)" stroke-width="2"/>
-          <line x1="30" y1="30" x2="425" y2="30" stroke="#fedd00" stroke-width="3"/>
-          <line x1="79.5" y1="260" x2="375.5" y2="260" stroke="rgba(255,255,255,.5)" stroke-width="2"/>
-          <line x1="227.5" y1="30" x2="227.5" y2="260" stroke="rgba(255,255,255,.35)" stroke-width="1.5"/>
-          <line x1="227.5" y1="452" x2="227.5" y2="458" stroke="rgba(255,255,255,.5)" stroke-width="2"/>
-          <g id="heatPoints"></g>
-        </svg>
-      </div>
-      <div class="fuente-tag">Puntos simulados a partir de la distribución real de golpes del jugador (zona de profundidad y lateral registrada por Baseline Vision). No son golpes individuales medidos uno a uno.</div>
-
-      <div class="kicker" style="margin-top:22px;">Calzado Joma recomendado para el nivel</div>
-      <div id="jomaReco"></div>
-    </div>
-  </div>
-</div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
 <script>
 // =========================================================
-// V-FITTER AI — Lógica de decisión
-// Fuente: "Definir" (frameworks) + "Logica de decisión" +
-// Catálogo Völkl (18 raquetas)
+// V-FITTER AI — Decision logic
+// Source: "Define" (frameworks) + "Decision logic" +
+// Völkl catalog (18 rackets)
 // =========================================================
 
-// pesoMin/pesoMax: gramos (para reglas de peso). patronSegundo: segundo número del patrón
-// de encordado (18 en "16x18", 20 en "18x20"...) usado para desempatar por spin/control.
-// denso: true solo para el único patrón 18x20 del catálogo. headHeavy: true solo V1 Power Arm.
+// pesoMin/pesoMax: grams (for weight rules). patronSegundo: second number of the string
+// pattern (18 in "16x18", 20 in "18x20"...) used as a tiebreaker for spin/control.
+// denso: true only for the catalog's single 18x20 pattern. headHeavy: true only for V1 Power Arm.
 const CATALOGO = {
-  // INICIADORES — POTENCIA
-  v1powerarm: {nombre:"VÖSTRA 1 Power Arm", nivel:"INICIADOR", orientacion:"Potencia",
-    specs:["255 g","115 in²","16x17 muy abierto","HH"], pesoMin:255, pesoMax:255, patronSegundo:17, denso:false, headHeavy:true,
-    why:"Único frame head-heavy del catálogo: suma masa extra al golpe sin esfuerzo de swing. Máxima comodidad, potencia fácil y mínimo impacto en brazo/hombro."},
-  v2: {nombre:"VÖSTRA V2", nivel:"INICIADOR", orientacion:"Potencia",
-    specs:["265 g","115 in²","16x19 abierto","HL"], pesoMin:265, pesoMax:265, patronSegundo:19, denso:false, headHeavy:false,
-    why:"Oversize arm-friendly. Genera potencia y spin con muy poco esfuerzo de swing — ideal para construir consistencia."},
-  v3: {nombre:"VÖSTRA V3", nivel:"INICIADOR", orientacion:"Potencia",
-    specs:["270 g","110 in²","16x19 abierto","HL"], pesoMin:270, pesoMax:270, patronSegundo:19, denso:false, headHeavy:false,
-    why:"Tecnología Catapult (resortes 3 y 9): potencia fácil, gran tolerancia a golpes descentrados y máxima maniobrabilidad."},
-  v4: {nombre:"VÖSTRA V4", nivel:"INICIADOR", orientacion:"Potencia",
-    specs:["275 g","105 in²","16x19 abierto","HL"], pesoMin:275, pesoMax:275, patronSegundo:19, denso:false, headHeavy:false,
-    why:"Cabeza amplia de 105 in² con tecnología Catapult: equilibrio entre potencia, control y comodidad en un marco versátil, ideal para jugadores en desarrollo."},
-  v5: {nombre:"VÖSTRA V5", nivel:"INICIADOR", orientacion:"Potencia",
-    specs:["260 g","100 in²","16x18 abierto","HL"], pesoMin:260, pesoMax:260, patronSegundo:18, denso:false, headHeavy:false,
-    why:"La más ligera de la gama. Patrón abierto 16x18 facilita generar spin y velocidad de swing con poco esfuerzo — excelente raqueta de transición."},
-  xplosive: {nombre:"XPLOSIVE", nivel:"INICIADOR", orientacion:"Potencia",
-    specs:["265 g","102 in²","16x19 abierto","HL"], pesoMin:265, pesoMax:265, patronSegundo:19, denso:false, headHeavy:false,
-    why:"Grafito de alta densidad y el precio de entrada más bajo del catálogo. Potencia viva y efectos constantes como primera raqueta de rendimiento."},
+  // BEGINNER — POWER
+  v1powerarm: {nombre:"VÖSTRA 1 Power Arm", nivel:"BEGINNER", orientacion:"Potencia",
+    specs:["255 g","115 in²","16x17 very open","HH"], pesoMin:255, pesoMax:255, patronSegundo:17, denso:false, headHeavy:true,
+    why:"The catalog's only head-heavy frame: adds extra mass to the shot with no extra swing effort. Maximum comfort, easy power, and minimal impact on arm/shoulder."},
+  v2: {nombre:"VÖSTRA V2", nivel:"BEGINNER", orientacion:"Potencia",
+    specs:["265 g","115 in²","16x19 open","HL"], pesoMin:265, pesoMax:265, patronSegundo:19, denso:false, headHeavy:false,
+    why:"Arm-friendly oversize. Generates power and spin with very little swing effort — ideal for building consistency."},
+  v3: {nombre:"VÖSTRA V3", nivel:"BEGINNER", orientacion:"Potencia",
+    specs:["270 g","110 in²","16x19 open","HL"], pesoMin:270, pesoMax:270, patronSegundo:19, denso:false, headHeavy:false,
+    why:"Catapult technology (springs 3 and 9): easy power, great tolerance for off-center hits, and maximum maneuverability."},
+  v4: {nombre:"VÖSTRA V4", nivel:"BEGINNER", orientacion:"Potencia",
+    specs:["275 g","105 in²","16x19 open","HL"], pesoMin:275, pesoMax:275, patronSegundo:19, denso:false, headHeavy:false,
+    why:"105 in² wide head with Catapult technology: balance of power, control, and comfort in a versatile frame, ideal for developing players."},
+  v5: {nombre:"VÖSTRA V5", nivel:"BEGINNER", orientacion:"Potencia",
+    specs:["260 g","100 in²","16x18 open","HL"], pesoMin:260, pesoMax:260, patronSegundo:18, denso:false, headHeavy:false,
+    why:"The lightest in the range. Open 16x18 pattern makes it easy to generate spin and swing speed with little effort — an excellent transition racket."},
+  xplosive: {nombre:"XPLOSIVE", nivel:"BEGINNER", orientacion:"Potencia",
+    specs:["265 g","102 in²","16x19 open","HL"], pesoMin:265, pesoMax:265, patronSegundo:19, denso:false, headHeavy:false,
+    why:"High-density graphite and the catalog's lowest entry price. Lively power and consistent spin as a first performance racket."},
 
-  // INTERMEDIOS
-  v1os: {nombre:"VÖSTRA V1 OS", nivel:"INTERMEDIO", orientacion:"Potencia",
-    specs:["285 g","110 in²","16x19 abierto","HL"], pesoMin:285, pesoMax:285, patronSegundo:19, denso:false, headHeavy:false,
-    why:"Sweet spot masivo. Comodidad absoluta y potencia controlada con gran tolerancia — el puente natural hacia niveles más altos."},
-  v8_285: {nombre:"VÖSTRA V8 (285g)", nivel:"INTERMEDIO", orientacion:"Sensación / Potencia",
-    specs:["285 g","100 in²","16x18 abierto","HL"], pesoMin:285, pesoMax:285, patronSegundo:18, denso:false, headHeavy:false,
-    why:"Patrón abierto 16x18: mucha mordida y facilidad de spin, buena sensación de tacto y potencia con poco esfuerzo. Ágil y fácil de acelerar."},
+  // INTERMEDIATE
+  v1os: {nombre:"VÖSTRA V1 OS", nivel:"INTERMEDIATE", orientacion:"Potencia",
+    specs:["285 g","110 in²","16x19 open","HL"], pesoMin:285, pesoMax:285, patronSegundo:19, denso:false, headHeavy:false,
+    why:"Massive sweet spot. Absolute comfort and controlled power with great tolerance — the natural bridge to higher levels."},
+  v8_285: {nombre:"VÖSTRA V8 (285g)", nivel:"INTERMEDIATE", orientacion:"Sensación / Potencia",
+    specs:["285 g","100 in²","16x18 open","HL"], pesoMin:285, pesoMax:285, patronSegundo:18, denso:false, headHeavy:false,
+    why:"Open 16x18 pattern: plenty of bite and easy spin, good feel and power with little effort. Agile and easy to accelerate."},
 
-  // INTERMEDIOS ALTOS
-  v7: {nombre:"VÖSTRA V7", nivel:"INTERMEDIO ALTO", orientacion:"Potencia / Efecto",
-    specs:["300 g","100 in²","16x19 abierto","HL"], pesoMin:300, pesoMax:300, patronSegundo:19, denso:false, headHeavy:false,
-    why:"Construcción arm-friendly con patrón abierto: genera profundidad y spin con facilidad. Pensada para juego agresivo de fondo de pista."},
-  v8_300: {nombre:"VÖSTRA V8 (300-315g)", nivel:"INTERMEDIO ALTO", orientacion:"Sensación / Efecto",
-    specs:["300-315 g","100 in²","16x18 abierto","HL"], pesoMin:300, pesoMax:315, patronSegundo:18, denso:false, headHeavy:false,
-    why:"Misma mordida y facilidad de spin que la V8 de 285g, con más masa para estabilidad ante golpes potentes."},
-  v1classic: {nombre:"V1 Classic Version 12", nivel:"INTERMEDIO ALTO", orientacion:"Sensación",
-    specs:["285 g","102 in²","16x19 abierto","HL"], pesoMin:285, pesoMax:285, patronSegundo:19, denso:false, headHeavy:false,
-    why:"Icónica desde hace 25 años. Perfil Vario Beam con protección máxima de brazo; sensación suave pero firme y nítida."},
-  v1evo: {nombre:"V1 EVO", nivel:"INTERMEDIO ALTO", orientacion:"Sensación",
-    specs:["305 g","102 in²","16x19 abierto","HL"], pesoMin:305, pesoMax:305, patronSegundo:19, denso:false, headHeavy:false,
-    why:"Perfil Vario Beam que optimiza estabilidad torsional: buen control, potencial de spin y potencia con menor fatiga."},
-  v1mp: {nombre:"VÖSTRA V1 MP", nivel:"INTERMEDIO ALTO", orientacion:"Sensación",
-    specs:["285 g","102 in²","16x19 abierto","HL"], pesoMin:285, pesoMax:285, patronSegundo:19, denso:false, headHeavy:false,
-    why:"Hereda la protección de brazo de la familia V1 con jugabilidad de alto nivel — comodidad sin sacrificar rendimiento."},
-  v10: {nombre:"VÖSTRA V10", nivel:"INTERMEDIO ALTO", orientacion:"Equilibrada (Control/Potencia)",
-    specs:["300-320 g","98 in²","16x19 beam delgado","HL"], pesoMin:300, pesoMax:320, patronSegundo:19, denso:false, headHeavy:false,
-    why:"Beam delgado dentro de un patrón abierto: combina control, potencia y sensación precisa. Sweet spot ampliado (V-Engine)."},
+  // UPPER INTERMEDIATE
+  v7: {nombre:"VÖSTRA V7", nivel:"UPPER INTERMEDIATE", orientacion:"Potencia / Efecto",
+    specs:["300 g","100 in²","16x19 open","HL"], pesoMin:300, pesoMax:300, patronSegundo:19, denso:false, headHeavy:false,
+    why:"Arm-friendly build with an open pattern: generates depth and spin with ease. Designed for aggressive baseline play."},
+  v8_300: {nombre:"VÖSTRA V8 (300-315g)", nivel:"UPPER INTERMEDIATE", orientacion:"Sensación / Efecto",
+    specs:["300-315 g","100 in²","16x18 open","HL"], pesoMin:300, pesoMax:315, patronSegundo:18, denso:false, headHeavy:false,
+    why:"Same bite and spin ease as the 285g V8, with more mass for stability against powerful shots."},
+  v1classic: {nombre:"V1 Classic Version 12", nivel:"UPPER INTERMEDIATE", orientacion:"Sensación",
+    specs:["285 g","102 in²","16x19 open","HL"], pesoMin:285, pesoMax:285, patronSegundo:19, denso:false, headHeavy:false,
+    why:"Iconic for 25 years. Vario Beam profile with maximum arm protection; soft yet firm and crisp feel."},
+  v1evo: {nombre:"V1 EVO", nivel:"UPPER INTERMEDIATE", orientacion:"Sensación",
+    specs:["305 g","102 in²","16x19 open","HL"], pesoMin:305, pesoMax:305, patronSegundo:19, denso:false, headHeavy:false,
+    why:"Vario Beam profile that optimizes torsional stability: good control, spin potential, and power with less fatigue."},
+  v1mp: {nombre:"VÖSTRA V1 MP", nivel:"UPPER INTERMEDIATE", orientacion:"Sensación",
+    specs:["285 g","102 in²","16x19 open","HL"], pesoMin:285, pesoMax:285, patronSegundo:19, denso:false, headHeavy:false,
+    why:"Inherits the arm protection of the V1 family with high-level playability — comfort without sacrificing performance."},
+  v10: {nombre:"VÖSTRA V10", nivel:"UPPER INTERMEDIATE", orientacion:"Equilibrada (Control/Potencia)",
+    specs:["300-320 g","98 in²","16x19 thin beam","HL"], pesoMin:300, pesoMax:320, patronSegundo:19, denso:false, headHeavy:false,
+    why:"Thin beam within an open pattern: combines control, power, and precise feel. Expanded sweet spot (V-Engine)."},
 
-  // AVANZADOS
-  c10evo: {nombre:"C10 EVO", nivel:"AVANZADO", orientacion:"Control",
+  // ADVANCED
+  c10evo: {nombre:"C10 EVO", nivel:"ADVANCED", orientacion:"Control",
     specs:["310 g","98 in²","16x19","HL"], pesoMin:310, pesoMax:310, patronSegundo:19, denso:false, headHeavy:false,
-    why:"Perfil delgado de 19mm y gran estabilidad. Maniobrabilidad de marco rápido con el control legendario de la línea C10."},
-  c10pro: {nombre:"C10 PRO", nivel:"AVANZADO", orientacion:"Control",
+    why:"Thin 19mm profile with great stability. Fast-frame maneuverability with the legendary control of the C10 line."},
+  c10pro: {nombre:"C10 PRO", nivel:"ADVANCED", orientacion:"Control",
     specs:["330 g","98 in²","16x19","HL"], pesoMin:330, pesoMax:330, patronSegundo:19, denso:false, headHeavy:false,
-    why:"Player's frame 'pro stock'. Máxima estabilidad para contrarrestar potencia rival y transformar defensa en ataque."},
-  v8pro: {nombre:"V8 Pro", nivel:"AVANZADO", orientacion:"Control",
-    specs:["305 g","100 in²","18x20 denso","HL"], pesoMin:305, pesoMax:305, patronSegundo:20, denso:true, headHeavy:false,
-    why:"Único patrón denso 18x20 del catálogo: tacto y control quirúrgico con la durabilidad y consistencia de un marco denso."},
-  v1pro: {nombre:"VÖSTRA V1 PRO", nivel:"AVANZADO", orientacion:"Control",
+    why:"'Pro stock' player's frame. Maximum stability to counter opponent power and turn defense into attack."},
+  v8pro: {nombre:"V8 Pro", nivel:"ADVANCED", orientacion:"Control",
+    specs:["305 g","100 in²","18x20 dense","HL"], pesoMin:305, pesoMax:305, patronSegundo:20, denso:true, headHeavy:false,
+    why:"The catalog's only dense 18x20 pattern: surgical feel and control with the durability and consistency of a dense frame."},
+  v1pro: {nombre:"VÖSTRA V1 PRO", nivel:"ADVANCED", orientacion:"Control",
     specs:["305 g","99.5 in²","16x19 Vario Beam","HL"], pesoMin:305, pesoMax:305, patronSegundo:19, denso:false, headHeavy:false,
-    why:"Única raqueta de competición con perfil Vario Beam (23-20-23mm): control preciso normalmente asociado a perfiles delgados tradicionales."},
-  v9: {nombre:"VÖSTRA V9", nivel:"AVANZADO", orientacion:"Control",
-    specs:["290-305 g","100 in²","16x19 beam 21mm"," HL"], pesoMin:290, pesoMax:305, patronSegundo:19, denso:false, headHeavy:false,
-    why:"Beam delgado de 21mm dentro de patrón abierto: control alto para un frame abierto, con juego agresivo y sensación firme y confortable."}
+    why:"The only competition racket with a Vario Beam profile (23-20-23mm): precise control normally associated with traditional thin profiles."},
+  v9: {nombre:"VÖSTRA V9", nivel:"ADVANCED", orientacion:"Control",
+    specs:["290-305 g","100 in²","16x19 21mm beam"," HL"], pesoMin:290, pesoMax:305, patronSegundo:19, denso:false, headHeavy:false,
+    why:"Thin 21mm beam within an open pattern: high control for an open frame, with aggressive play and a firm, comfortable feel."}
 };
 
 const NOMBRE_REAL_JUGADOR = {
@@ -641,13 +544,13 @@ const NOMBRE_REAL_JUGADOR = {
 };
 
 const NIVEL_JUGADOR_V2 = {
-  "Jugador 01": "INICIADOR", "Jugador 02": "INICIADOR", "Jugador 03": "INICIADOR",
-  "Jugador 04": "INICIADOR", "Jugador 05": "INICIADOR", "Jugador 06": "INICIADOR",
-  "Jugador 07": "INTERMEDIO", "Jugador 08": "INTERMEDIO",
-  "Jugador 09": "INTERMEDIO ALTO", "Jugador 10": "INTERMEDIO ALTO",
-  "Jugador 11": "INTERMEDIO ALTO", "Jugador 12": "INTERMEDIO ALTO", "Jugador 13": "INTERMEDIO ALTO",
-  "Jugador 14": "AVANZADO", "Jugador 15": "AVANZADO", "Jugador 16": "AVANZADO",
-  "Jugador 17": "AVANZADO", "Jugador 18": "AVANZADO"
+  "Jugador 01": "BEGINNER", "Jugador 02": "BEGINNER", "Jugador 03": "BEGINNER",
+  "Jugador 04": "BEGINNER", "Jugador 05": "BEGINNER", "Jugador 06": "BEGINNER",
+  "Jugador 07": "INTERMEDIATE", "Jugador 08": "INTERMEDIATE",
+  "Jugador 09": "UPPER INTERMEDIATE", "Jugador 10": "UPPER INTERMEDIATE",
+  "Jugador 11": "UPPER INTERMEDIATE", "Jugador 12": "UPPER INTERMEDIATE", "Jugador 13": "UPPER INTERMEDIATE",
+  "Jugador 14": "ADVANCED", "Jugador 15": "ADVANCED", "Jugador 16": "ADVANCED",
+  "Jugador 17": "ADVANCED", "Jugador 18": "ADVANCED"
 };
 
 const DATOS_JUGADORES = {
@@ -732,7 +635,7 @@ function evaluarFramework(valor, excelente, aceptable){
 }
 
 function clasificarNivel(jugadorId, d){
-  const nivel = NIVEL_JUGADOR_V2[jugadorId] || "INTERMEDIO";
+  const nivel = NIVEL_JUGADOR_V2[jugadorId] || "INTERMEDIATE";
   const det = [
     evaluarFramework(d.velocidad, v => v > 110, v => v >= 80 && v <= 110),
     evaluarFramework(d.altura, v => v >= 0.6 && v <= 1.2, v => v > 1.2 && v <= 2.0),
@@ -783,10 +686,10 @@ function desempateAvanzado(filtrados, d){
 
 function elegirRaqueta(nivel, orientacion, d){
   const mapa = {
-    "INICIADOR":       ["v1powerarm","v2","v3","v4","v5","xplosive"],
-    "INTERMEDIO":      ["v1os","v8_285"],
-    "INTERMEDIO ALTO": ["v7","v8_300","v1classic","v1evo","v1mp","v10"],
-    "AVANZADO":        ["c10evo","c10pro","v8pro","v1pro","v9"]
+    "BEGINNER":            ["v1powerarm","v2","v3","v4","v5","xplosive"],
+    "INTERMEDIATE":        ["v1os","v8_285"],
+    "UPPER INTERMEDIATE":  ["v7","v8_300","v1classic","v1evo","v1mp","v10"],
+    "ADVANCED":            ["c10evo","c10pro","v8pro","v1pro","v9"]
   };
 
   const candidatos = mapa[nivel].map(k => CATALOGO[k]);
@@ -814,10 +717,10 @@ function elegirRaqueta(nivel, orientacion, d){
 
   if (filtrados.length === 1) return {raqueta: filtrados[0], regla};
 
-  if (nivel === "INICIADOR"){
+  if (nivel === "BEGINNER"){
     return {raqueta: desempateIniciador(filtrados, d), regla: regla || {tipo:"perfilIniciador"}};
   }
-  if (nivel === "AVANZADO"){
+  if (nivel === "ADVANCED"){
     return {raqueta: desempateAvanzado(filtrados, d), regla: regla || {tipo:"perfilAvanzado"}};
   }
 
@@ -832,52 +735,52 @@ function elegirRaqueta(nivel, orientacion, d){
 function fraseDesempate(regla){
   if (!regla) return "";
   if (regla.tipo === "estabilidad"){
-    return ` Además, la velocidad de golpe (<b>${regla.valor} km/h</b>) activó nuestra regla de estabilidad: priorizamos una raqueta más pesada o head-heavy para controlar mejor el impacto.`;
+    return ` Additionally, the shot speed (<b>${regla.valor} km/h</b>) triggered our stability rule: we prioritized a heavier or head-heavy racket for better impact control.`;
   }
   if (regla.tipo === "densidad"){
-    return ` Además, el porcentaje de golpes fuera o a la red (<b>${regla.valor.toFixed(1)}%</b>) activó nuestra regla de densidad: priorizamos un patrón de encordado más denso (18x20) para sumar control.`;
+    return ` Additionally, the percentage of shots out or into the net (<b>${regla.valor.toFixed(1)}%</b>) triggered our density rule: we prioritized a denser string pattern (18x20) for extra control.`;
   }
   if (regla.tipo === "patronAbierto"){
-    return ` Además, la efectividad de servicio (<b>${regla.valor}%</b>) activó nuestra regla de patrón abierto: priorizamos un encordado más abierto para ayudar a sumar spin y consistencia.`;
+    return ` Additionally, the serve effectiveness (<b>${regla.valor}%</b>) triggered our open-pattern rule: we prioritized a more open string pattern to help add spin and consistency.`;
   }
   if (regla.tipo === "perfilIniciador"){
-    return ` Dentro de las raquetas de iniciación, la velocidad de golpe y el porcentaje de golpes fuera/red definieron cuál de las 6 opciones se ajusta mejor al perfil.`;
+    return ` Among the beginner rackets, shot speed and the percentage of shots out/into the net determined which of the 6 options best fits the profile.`;
   }
   if (regla.tipo === "perfilAvanzado"){
-    return ` Dentro de las raquetas de control para avanzados, la precisión, velocidad y agilidad en peloteos largos definieron cuál de las 5 opciones se ajusta mejor al perfil.`;
+    return ` Among the control rackets for advanced players, precision, speed, and agility in long rallies determined which of the 5 options best fits the profile.`;
   }
   return "";
 }
 
 function recomendarEncordado(orientacion, patronTexto){
-  const denso = patronTexto.toLowerCase().includes("18x20") || patronTexto.toLowerCase().includes("denso");
+  const denso = patronTexto.toLowerCase().includes("18x20") || patronTexto.toLowerCase().includes("dense");
 
   if (orientacion === "potencia"){
     return {
-      cuerda:"Völkl V-Icon (Multifilamento)",
-      cuerdaSub:"Maximiza potencia y absorción de impacto con mínimo esfuerzo de swing.",
+      cuerda:"Völkl V-Icon (Multifilament)",
+      cuerdaSub:"Maximizes power and impact absorption with minimal swing effort.",
       tension:"48 – 52 lbs",
-      tensionSub:"Tensión baja-media: favorece pocketing y velocidad de salida de bola."
+      tensionSub:"Low-medium tension: favors pocketing and ball exit speed."
     };
   }
   if (orientacion === "sensacion"){
     return {
-      cuerda:"Völkl V-Icon Premium (Multifilamento)",
-      cuerdaSub:"Prioriza tacto y protección de brazo sin sacrificar potencia.",
+      cuerda:"Völkl V-Icon Premium (Multifilament)",
+      cuerdaSub:"Prioritizes feel and arm protection without sacrificing power.",
       tension:"50 – 54 lbs",
-      tensionSub:"Tensión intermedia: equilibra confort con consistencia de control."
+      tensionSub:"Medium tension: balances comfort with control consistency."
     };
   }
   return {
-    cuerda: denso ? "Völkl Monofilamento / Híbrido de control" : "Völkl Monofilamento",
-    cuerdaSub: denso ? "El patrón denso ya aporta control; la cuerda debe sumar durabilidad." : "Refuerza precisión direccional en un patrón abierto.",
+    cuerda: denso ? "Völkl Monofilament / Control Hybrid" : "Völkl Monofilament",
+    cuerdaSub: denso ? "The dense pattern already provides control; the string should add durability." : "Reinforces directional precision in an open pattern.",
     tension:"52 – 56 lbs",
-    tensionSub:"Tensión alta: máxima precisión direccional para golpe de swing largo."
+    tensionSub:"High tension: maximum directional precision for a long swing shot."
   };
 }
 
 function etiquetaOrientacion(o){
-  return {potencia:"Potencia", sensacion:"Sensación", control:"Control"}[o] || o;
+  return {potencia:"Power", sensacion:"Feel", control:"Control"}[o] || o;
 }
 
 function poblarSelectorJugadores(){
@@ -885,7 +788,7 @@ function poblarSelectorJugadores(){
   Object.keys(DATOS_JUGADORES).forEach(j => {
     const opt = document.createElement('option');
     opt.value = j;
-    opt.textContent = j.replace('Jugador', 'Jugador #');
+    opt.textContent = j.replace('Jugador ', 'Player #');
     sel.appendChild(opt);
   });
 }
@@ -893,22 +796,29 @@ function poblarSelectorJugadores(){
 function nivelClase(r){
   if (r === "avanzado") return "avanzado";
   if (r === "intermedio") return "intermedio";
-  return "iniciador";
+  if (r === "iniciador") return "iniciador";
+  return "";
+}
+
+function tipoGolpe(d){
+  if (d.altura >= 1.3) return "Spin";
+  if (d.velocidad >= 90) return "Flat";
+  return "Slice";
 }
 
 function mostrarDatosCrudos(d, nivelDetalle){
   const filas = [
-    ["Velocidad máxima de golpe", `${d.velocidad} km/h`, nivelDetalle.det[0]],
-    ["Margen sobre la red", `${d.altura} m`, nivelDetalle.det[1]],
-    ["Consistencia (golpes dentro)", `${d.servicio}%`, nivelDetalle.det[2]],
-    ["Control de errores", `${(100 - d.erroresPct).toFixed(1)}%`, nivelDetalle.det[3]],
-    ["Peloteos largos ganados (9+ golpes)", `${d.rallyLargoPct}%`, nivelDetalle.det[4]],
-    ["Velocidad promedio de golpe", `${d.velocidad_prom} km/h`, nivelDetalle.det[5]]
+    ["Average serve speed", `${d.velocidad_prom} km/h`, nivelDetalle.det[5]],
+    ["Max serve speed", `${d.velocidad} km/h`, nivelDetalle.det[0]],
+    ["Clearance", `${d.altura} m`, nivelDetalle.det[1]],
+    ["Acceleration", `${d.servicio} rpm`, nivelDetalle.det[2]],
+    ["Shot type", tipoGolpe(d), null],
+    ["Air speed", `${d.rallyLargoPct} km/h`, nivelDetalle.det[4]]
   ];
 
   document.getElementById('datosPanel').innerHTML = filas.map(f =>
     `<div class="datos-row"><span class="k">${f[0]}</span><span class="v ${nivelClase(f[2])}">${f[1]}</span></div>`
-  ).join('') + `<div class="fuente-tag">Fuente: Baseline Vision · DATOS S1 Y S2 V2.xlsx (hoja Sesiones) · sesión de prueba (~30 min)</div>`;
+  ).join('') + `<div class="fuente-tag">Source: Baseline Vision · DATOS S1 Y S2 V2.xlsx (Sessions sheet) · test session (~30 min)</div>`;
 
   document.getElementById('emptyStateLeft').style.display = 'none';
   document.getElementById('datosPanel').style.display = 'block';
@@ -916,12 +826,12 @@ function mostrarDatosCrudos(d, nivelDetalle){
 
 function fortalezaYDebilidad(d, det){
   const etiquetas = [
-    ["Velocidad máxima de golpe", d.velocidad, "km/h"],
-    ["Margen sobre la red", d.altura, "m"],
-    ["Consistencia (golpes dentro)", d.servicio, "%"],
-    ["Control de errores", +(100 - d.erroresPct).toFixed(1), "%"],
-    ["Peloteos largos ganados", d.rallyLargoPct, "%"],
-    ["Velocidad promedio de golpe", d.velocidad_prom, "km/h"]
+    ["Max shot speed", d.velocidad, "km/h"],
+    ["Net clearance", d.altura, "m"],
+    ["Consistency (shots in)", d.servicio, "%"],
+    ["Error control", +(100 - d.erroresPct).toFixed(1), "%"],
+    ["Long rallies won", d.rallyLargoPct, "%"],
+    ["Average shot speed", d.velocidad_prom, "km/h"]
   ];
   let fortalezaIdx = det.findIndex(r => r === "avanzado");
   if (fortalezaIdx === -1) fortalezaIdx = det.findIndex(r => r === "intermedio");
@@ -937,21 +847,21 @@ function fortalezaYDebilidad(d, det){
 }
 
 function posicionJuego(d){
-  if (d.depth_red_pct >= 20) return "Jugador de ataque en red";
-  if (d.depth_fondo_pct >= 60) return "Jugador de fondo";
-  return "Jugador de transición";
+  if (d.depth_red_pct >= 20) return "Net attacker";
+  if (d.depth_fondo_pct >= 60) return "Baseline player";
+  return "Transition player";
 }
 
 function longitudSwing(d){
   const ratio = d.velocidad_prom / d.velocidad;
-  if (ratio >= 0.75) return "swing largo";
-  if (ratio >= 0.60) return "swing medio-largo";
-  if (ratio >= 0.45) return "swing medio";
-  return "swing corto";
+  if (ratio >= 0.75) return "long swing";
+  if (ratio >= 0.60) return "medium-long swing";
+  if (ratio >= 0.45) return "medium swing";
+  return "short swing";
 }
 
 function calidadImpacto(d){
-  return d.erroresPct < 25 ? "impacto centrado" : "impacto descentrado";
+  return d.erroresPct < 25 ? "centered impact" : "off-center impact";
 }
 
 function construirFrasePerfil(d){
@@ -959,9 +869,9 @@ function construirFrasePerfil(d){
   const swing = longitudSwing(d);
   const pctProfundos = Math.round(d.pct_profundos);
   const impacto = calidadImpacto(d);
-  const conector = impacto === "impacto descentrado" ? "pero con" : "y con";
-  return `${posicion} con velocidad de golpe de <b>${d.velocidad} km/h</b> y ${swing}. ` +
-         `Detectamos un <b>${pctProfundos}%</b> de golpes profundos ${conector} <b>${impacto}</b>.`;
+  const conector = impacto === "off-center impact" ? "but with" : "and with";
+  return `${posicion} with a shot speed of <b>${d.velocidad} km/h</b> and ${swing}. ` +
+         `We detected <b>${pctProfundos}%</b> of deep shots ${conector} <b>${impacto}</b>.`;
 }
 
 let currentJugador = null;
@@ -978,6 +888,7 @@ function mostrarDiagnostico(){
     document.getElementById('resultPanel').classList.remove('show');
     document.getElementById('emptyStateLeft').style.display = 'flex';
     document.getElementById('datosPanel').style.display = 'none';
+    document.getElementById('metricasPanel').style.display = 'none';
     return;
   }
 
@@ -986,18 +897,11 @@ function mostrarDiagnostico(){
   const orientacion = identificarOrientacion(d, "auto");
   const {raqueta, regla} = elegirRaqueta(nivel, orientacion, d);
   const encordado = recomendarEncordado(orientacion, raqueta.specs[2]);
-  const {fortaleza, debilidad} = fortalezaYDebilidad(d, det);
-  const nombreReal = NOMBRE_REAL_JUGADOR[jugador] || jugador;
 
   mostrarDatosCrudos(d, {det});
 
-  document.getElementById('entregableHeader').innerHTML =
-    `DIAGNÓSTICO DE RENDIMIENTO VÖLKL<span class="sub">${nombreReal.toUpperCase()} · ${jugador.toUpperCase()}</span>`;
-
-  document.getElementById('perfilTexto').innerHTML = construirFrasePerfil(d);
-
   document.getElementById('badges').innerHTML =
-    `<span class="badge badge-orient">Orientación: ${etiquetaOrientacion(orientacion)}</span>`;
+    `<span class="badge badge-orient">Orientation: ${etiquetaOrientacion(orientacion)}</span>`;
 
   document.getElementById('nivelGrande').textContent = nivel;
 
@@ -1010,51 +914,31 @@ function mostrarDiagnostico(){
   document.getElementById('tensionValue').textContent = encordado.tension;
   document.getElementById('tensionSub').textContent = encordado.tensionSub;
 
-  const pasos = [
-    `Prueba esta raqueta en <b>2-3 sesiones</b> antes de sacar conclusiones definitivas.`,
-    `Ajusta la tensión según cómo se sienta el control: si hay mucho <b>"pocketing"</b>, sube la tensión; si se siente muy dura, bájala.`,
-    `Trabaja la debilidad detectada — <b>${debilidad}</b>. La raqueta da la base; la consistencia se construye en cancha.`
-  ];
-  document.getElementById('proximosPasos').innerHTML = pasos.map(p => `<li>${p}</li>`).join('');
-
   document.getElementById('emptyState').style.display = 'none';
   document.getElementById('resultPanel').classList.add('show');
+
+  document.getElementById('metricasPanel').style.display = 'block';
+  cambiarTabMetrica('historial');
 }
 
 poblarSelectorJugadores();
 
 const METRICA_META = {
-  velocidad:      {label:"Velocidad máxima de golpe",    unidad:"km/h"},
-  velocidad_prom: {label:"Velocidad promedio de golpe",  unidad:"km/h"},
-  altura:         {label:"Margen sobre la red",          unidad:"m"},
-  servicio:       {label:"Consistencia (golpes dentro)", unidad:"%"},
-  erroresPct:     {label:"Errores (fuera + red)",        unidad:"%"},
-  rallyLargoPct:  {label:"Peloteos largos ganados",      unidad:"%"}
+  velocidad_prom: {label:"Average serve speed", unidad:"km/h"},
+  velocidad:      {label:"Max serve speed",     unidad:"km/h"},
+  altura:         {label:"Clearance",           unidad:"m"},
+  servicio:       {label:"Acceleration",        unidad:"rpm"},
+  rallyLargoPct:  {label:"Air speed",           unidad:"km/h"}
 };
 
 let chartHistorialInst = null;
 let chartComparativaInst = null;
 
-function abrirMetricas(){
-  if (!currentJugador) return;
-  document.getElementById('modalPlayerName').textContent = currentJugador.replace('Jugador', 'Jugador #');
-  document.getElementById('modalOverlay').classList.add('show');
-  cambiarTab('historial');
-}
-
-function cerrarMetricas(){
-  document.getElementById('modalOverlay').classList.remove('show');
-}
-
-function cerrarMetricasClick(e){
-  if (e.target.id === 'modalOverlay') cerrarMetricas();
-}
-
-function cambiarTab(tab){
+function cambiarTabMetrica(tab){
   const tabs = {
-    historial:    ['tabHistorial', 'tabPanelHistorial', renderHistorial],
-    comparativa:  ['tabComparativa', 'tabPanelComparativa', renderComparativa],
-    heatmap:      ['tabHeatmap', 'tabPanelHeatmap', renderHeatmap]
+    historial:    ['tabHistorial', 'panelHistorial', renderHistorial],
+    comparativa:  ['tabComparativa', 'panelComparativa', renderComparativa],
+    heatmap:      ['tabHeatmap', 'panelHeatmap', renderHeatmap]
   };
   Object.values(tabs).forEach(([btnId, panelId]) => {
     document.getElementById(btnId).classList.remove('active');
@@ -1080,7 +964,7 @@ function renderHistorial(){
   chartHistorialInst = new Chart(ctx, {
     type: 'line',
     data: {
-      labels: ['Sesión 1 (raqueta personal)', 'Sesión 2 (Völkl)'],
+      labels: ['Session 1 (personal racket)', 'Session 2 (Völkl)'],
       datasets: [{
         label: `${meta.label} (${meta.unidad})`,
         data: [s1, s2],
@@ -1124,7 +1008,7 @@ function renderComparativa(){
       labels: keys.map(k => `${METRICA_META[k].label} (${METRICA_META[k].unidad})`),
       datasets: [
         {
-          label: 'Raqueta personal (Sesión 1)',
+          label: 'Personal racket (Session 1)',
           data: keys.map(k => s1[k]),
           backgroundColor: 'rgba(255,255,255,.35)',
           borderColor: 'rgba(255,255,255,.6)',
@@ -1132,7 +1016,7 @@ function renderComparativa(){
           borderRadius: 2
         },
         {
-          label: 'Raqueta Völkl (Sesión 2)',
+          label: 'Völkl racket (Session 2)',
           data: keys.map(k => s2[k]),
           backgroundColor: '#fedd00',
           borderColor: '#fedd00',
@@ -1191,28 +1075,6 @@ function renderHeatmap(){
   const g = document.getElementById('heatPoints');
   g.setAttribute('style', 'mix-blend-mode:screen;');
   g.innerHTML = svgPoints;
-
-  renderJomaReco(currentJugador, d);
-}
-
-const JOMA_MODELOS = {
-  "INICIADOR":        {modelo:"T.SET", nota:"Línea de entrada, pensada para uso no profesional / jugadores que no exigen mucho al calzado."},
-  "INTERMEDIO":        {modelo:"T.MASTER 1000", nota:"Sistema de ventilación VTS, Glove System para comodidad y menor peso, suela con tecnología Durability (alta resistencia a la abrasión) — para jugadores frecuentes sin ser de alta competición."},
-  "INTERMEDIO ALTO":   {modelo:"T.MASTER 1000", nota:"Sistema de ventilación VTS, Glove System para comodidad y menor peso, suela con tecnología Durability (alta resistencia a la abrasión) — para jugadores frecuentes sin ser de alta competición."},
-  "AVANZADO":          {modelo:"T.ACE PRO", nota:"Mediasuela FULL DUAL PULSOR (Phylon doble capa) con sistema REBOUND para amortiguación e impulso — diseñada para alta competición y jugadores exigentes."}
-};
-
-function renderJomaReco(jugadorId, d){
-  const {nivel} = clasificarNivel(jugadorId, d);
-  const m = JOMA_MODELOS[nivel] || JOMA_MODELOS["INTERMEDIO"];
-  document.getElementById('jomaReco').innerHTML = `
-    <div class="config-box">
-      <div class="label">Joma ${m.modelo} · versión All Court</div>
-      <div class="value">${m.nota}</div>
-      <div class="sub">También disponible en versión Clay. Precio, imagen y disponibilidad actuales en la
-        <a href="https://www.joma-sport.com/es_MX/deporte/tenis/calzado/" target="_blank" rel="noopener" style="color:var(--gold);">tienda oficial Joma</a>.
-      </div>
-    </div>`;
 }
 </script>
 
