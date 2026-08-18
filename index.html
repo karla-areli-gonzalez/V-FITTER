@@ -325,7 +325,7 @@
       <div class="field" style="margin-bottom:0;">
         <label>Evaluated session</label>
         <select id="sesionSelect" onchange="mostrarDiagnostico()">
-          <option value="Sesión 1">Session 1 — Personal racket (baseline)</option>
+          <option value="Sesión 1">Session 1 — Personal racket</option>
           <option value="Sesión 2">Session 2 — With Völkl racket</option>
         </select>
       </div>
@@ -339,7 +339,7 @@
       <h2><span class="hex">⬡</span> Raw test data</h2>
       <div class="empty-state" id="emptyStateLeft">
         <div class="hex">⬡</div>
-        <p>Select a player above to see their metrics captured by Baseline Vision.</p>
+        <p>Select a player above.</p>
       </div>
       <div id="datosPanel" style="display:none;"></div>
 
@@ -392,7 +392,7 @@
               <g id="heatPoints"></g>
             </svg>
           </div>
-          <div class="fuente-tag">Points simulated from the player's real shot distribution (depth and lateral zone recorded by Baseline Vision). These are not individually measured shots.</div>
+          <div class="fuente-tag">Points simulated from the player's real shot distribution (depth and lateral zone). These are not individually measured shots.</div>
         </div>
       </div>
     </div>
@@ -818,7 +818,7 @@ function mostrarDatosCrudos(d, nivelDetalle){
 
   document.getElementById('datosPanel').innerHTML = filas.map(f =>
     `<div class="datos-row"><span class="k">${f[0]}</span><span class="v ${nivelClase(f[2])}">${f[1]}</span></div>`
-  ).join('') + `<div class="fuente-tag">Source: Baseline Vision · DATOS S1 Y S2 V2.xlsx (Sessions sheet) · test session (~30 min)</div>`;
+  ).join('');
 
   document.getElementById('emptyStateLeft').style.display = 'none';
   document.getElementById('datosPanel').style.display = 'block';
